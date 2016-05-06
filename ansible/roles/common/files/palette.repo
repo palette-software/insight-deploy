@@ -1,0 +1,5 @@
+[palette-rpm]
+name=Palette RPM Repository
+baseurl=http://rpm.palette-software.net/redhat/
+enabled=1
+gpgcheck=0
