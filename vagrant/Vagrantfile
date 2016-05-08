@@ -1,8 +1,8 @@
 sshKey = File.read("keys/insight-deploy-key.pub")
 
 nodes = [
-  { :hostname => 'insight-control',   :ip => '192.168.0.40', :box => 'palette-insight-centos67', :provision => ["scripts/control-provision.sh"] },
-  { :hostname => 'insight-s1',      :ip => '192.168.0.50', :box => 'palette-insight-centos67' },
+  { :hostname => 'insight-control',   :ip => '192.168.1.40', :box => 'palette-insight-centos67', :provision => ["scripts/control-provision.sh"] },
+  { :hostname => 'insight-s1',      :ip => '192.168.1.50', :box => 'palette-insight-centos67' },
   #{ :hostname => 'insight-s2',      :ip => '192.168.0.51', :box => 'palette-insight-centos67' }
 ]
 
@@ -21,12 +21,12 @@ Vagrant.configure("2") do |config|
           "--memory", memory.to_s,
         ]
       end
-      
+
       nodeconfig.vm.synced_folder "../", "/provisioning"
       nodeconfig.vm.provision "shell", inline: <<-EOF
         echo '#{sshKey}' >> /home/vagrant/.ssh/authorized_keys
       EOF
-      
+
       if node[:provision]
         node[:provision].each do |provision|
             nodeconfig.vm.provision "shell", path: provision
