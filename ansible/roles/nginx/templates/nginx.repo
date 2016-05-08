@@ -1,6 +1,6 @@
 [nginx]
 name=Nginx repo - $basearch
-baseurl=http://nginx.org/packages/centos/6/$basearch
+baseurl=http://nginx.org/packages/{{ distro_kind }}/{{ ansible_distribution_major_version }}/$basearch
 failovermethod=priority
 gpgcheck=1
 enabled=1

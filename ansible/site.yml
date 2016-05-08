@@ -9,3 +9,5 @@
     - common
     - nginx
     - supervisor
+    - golang
+    - insight-server

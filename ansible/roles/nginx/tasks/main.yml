@@ -1,13 +1,16 @@
 ---
+
+- name: Add the NGINX repository definition
+  template: src=nginx.repo dest=/etc/yum.repos.d/nginx.repo
+
+- name: Create the GPG key for NGINX
+  copy: src=RPM-GPG-KEY-NGINX dest=/etc/pki/rpm-gpg
+
 - name: Install nginx
   yum: name=nginx state=present
-  
+
 - name: Configure SELinux to allow httpd network connect
   seboolean: name=httpd_can_network_connect state=yes persistent=yes
-  
-#- name: Copy nginx configuration for wordpress
-#  template: src=default.conf dest=/etc/nginx/conf.d/default.conf
-#  notify: restart nginx
 
 
 # FIREWALLD IS ONLY FOR CENTOS & RH > 7
