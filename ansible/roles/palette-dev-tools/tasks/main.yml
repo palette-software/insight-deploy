@@ -9,3 +9,6 @@
     - screen
     - tmux
     - htop
+
+- name: Install OpenJDK (1.8)
+  yum: name=java-1.8.0-openjdk state=present

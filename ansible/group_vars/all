@@ -24,3 +24,5 @@ distro_kind: centos
 
 splunk_tcp_target: "splunk-insight.palette-software.net:9997"
 
+insight_nginx_version: 1.0.0
+insight_supervisor_version: 3.2.3
