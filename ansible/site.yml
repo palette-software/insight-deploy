@@ -3,11 +3,14 @@
   hosts: insight-server
   remote_user: vagrant
   # remote_user: user
-  sudo: yes
+  become: yes
+  become_user: root
 
   roles:
     - common
+    - palette-dev-tools
     - nginx
     - supervisor
+    - splunkforwarder
     - golang
     - insight-server

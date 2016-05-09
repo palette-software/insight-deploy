@@ -1,28 +1,42 @@
 ---
 # This playbook will install MariaDB and create db user and give permissions.
+#
+- name: Upgrade Pyhon-MELD for supervisord
+  shell: pip install 'meld3 == 1.0.1'
+  become: yes
+  become_user: root
 
-- name: Install Supervisor package
-  yum: name=supervisor state=installed
-  
-  
+- name: Install latest Supervisor via PIP
+  pip: name=supervisor state=present version=3.2.3
+
+- name: Copy the supervisor init.d script
+  copy: src=init.d/supervisord dest=/etc/init.d/supervisord owner=root group=root mode="u=rwx,g=rx,o=rx"
+
+- name: Copy the default supervisor config
+  copy: src=supervisord.conf dest=/etc/supervisord.conf owner=root group=root mode="u=rw,g=r,o=r"
+
+#- name: Install Supervisor package
+  #yum: name=supervisor state=installed
+
+
 
 #- name: Configure SELinux to start mysql on any port
 #  seboolean: name=mysql_connect_any state=true persistent=yes
 #
 #- name: Create Mysql configuration file
 #  template: src=my.cnf.j2 dest=/etc/my.cnf
-#  notify: 
+#  notify:
 #  - restart mariadb
-  
+
 #- name: Create MariaDB log file
 #  file: path=/var/log/mysqld.log state=touch owner=mysql group=mysql mode=0775
-  
+
 #- name: Start MariaDB Service
 #  service: name=mariadb state=started enabled=yes
 
 #- name: insert firewalld rule
 #  firewalld: port={{ mysql_port }}/tcp permanent=true state=enabled immediate=yes
 
-  
+
 - name: Supervisor service state
   service: name=supervisord state=started enabled=yes
