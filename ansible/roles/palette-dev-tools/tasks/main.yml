@@ -1,0 +1,11 @@
+---
+- name: Install Palette Dev Team tools
+  yum: name={{ item }} state=present
+  with_items:
+    - vim
+    - git
+    - curl
+    - wget
+    - screen
+    - tmux
+    - htop

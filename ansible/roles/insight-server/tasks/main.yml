@@ -1,5 +1,4 @@
 ---
-
 - name: Install Insight Server package
   yum: name=palette-insight-server state=latest
 
@@ -7,7 +6,12 @@
   copy: src=supervisor.conf dest=/etc/palette-insight-server/supervisor.conf
 
 - name: (Re)start palette insight server via Supervisor
-  supervisorctl: name=palette-insight-server state=restarted config=/etc/palette-insight-server/supervisor.conf
+  supervisorctl: name=palette-insight-server state=restarted
+
+- name: Restart splunk
+  shell: /opt/splunkforwarder/bin/splunk restart --accept-license
+  become: yes
+  become_user: splunk
 
 
 
