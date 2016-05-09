@@ -1,5 +1,5 @@
 ---
-- name: Install Nginx
+- name: Install Palette Insight
   hosts: insight-server
   remote_user: vagrant
   # remote_user: user
