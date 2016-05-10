@@ -1,4 +1,7 @@
 ---
+- name: Install Vim-enhanced
+  yum: name=vim state=present
+
 - name: Create ~/.vim folder
   file: path=/home/{{ uservar }}/.vim owner={{ uservar }} group={{ uservar }} state=directory mode="u=rwx,g=rwx,o=rx"
 
