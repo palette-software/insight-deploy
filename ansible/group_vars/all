@@ -1,16 +1,7 @@
 ---
 # Variables listed here are applicable to all host groups
 
-
-# This is used for the nginx server configuration, but access to the
-# WordPress site is not restricted by a named host.
-nginx_port: 80
-server_hostname: server.example.com
-
-# Disable All Updates
-# By default automatic updates are enabled, set this value to true to disable all automatic updates
-auto_up_disable: false
-
+uservar: ec2-user
 #Define Core Update Level
 # true  = Development, minor, and major updates are all enabled
 # false = Development, minor, and major updates are all disabled

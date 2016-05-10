@@ -1,0 +1,20 @@
+---
+- name: Create ~/.vim folder
+  file: path=/home/{{ uservar }}/.vim owner={{ uservar }} group={{ uservar }} state=directory mode="u=rwx,g=rwx,o=rx"
+
+- name: Create ~/.vim/bundle folder
+  file: path=/home/{{ uservar }}/.vim/bundle owner={{ uservar }} group={{ uservar }} state=directory mode="u=rwx,g=rwx,o=rx"
+
+- name: Clone Vundle
+  git:
+    repo: https://github.com/VundleVim/Vundle.vim.git
+    dest: /home/{{ uservar }}/.vim/bundle/Vundle.vim
+    update: no
+
+- name: Copy .vimrc
+  copy: src=.vimrc dest=/home/{{ uservar }}/.vimrc owner={{ uservar }} group={{ uservar }} mode="u=rw,g=rw,o=r"
+
+# Since (at least) the colortheme is not installed without the vundle plugins,
+# make sure the plugin install runs (as it asks for an enter keypress)
+- name: Install all Vundle plugins
+  shell: "echo | echo | vim +PluginInstall +qall &>/dev/null"
