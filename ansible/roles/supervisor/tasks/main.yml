@@ -1,8 +1,9 @@
 ---
 - name: Upgrade Pyhon-MELD for supervisord
-  shell: pip install 'meld3 == 1.0.1'
-  become: yes
-  become_user: root
+  pip: name=meld3 version=1.0.1 state=present
+  #shell: pip install 'meld3 == 1.0.1'
+  #become: yes
+  #become_user: root
 
 - name: Install latest Supervisor via PIP
   pip: name=supervisor state=present version={{ insight_supervisor_version }}

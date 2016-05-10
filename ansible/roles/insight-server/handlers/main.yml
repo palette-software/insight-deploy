@@ -1,5 +1,3 @@
 ---
-# Handler to handle DB tier notifications
-
-- name: restart supervisor
-  service: name=supervisord state=restarted
+- name: Restart palette-insight-server
+  supervisorctl: name=palette-insight-server state=restarted

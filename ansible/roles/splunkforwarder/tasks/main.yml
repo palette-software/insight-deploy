@@ -8,9 +8,5 @@
 
 - name: Copy Splunkforwarder input configuration
   template: src=inputs.conf dest=/opt/splunkforwarder/etc/system/local/inputs.conf owner=splunk group=splunk
-
-- name: Restart splunk
-  shell: /opt/splunkforwarder/bin/splunk restart --accept-license
-  become: yes
-  become_user: splunk
-
+  notify:
+    - Restart splunk
