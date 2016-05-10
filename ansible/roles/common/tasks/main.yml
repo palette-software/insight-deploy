@@ -3,16 +3,10 @@
   yum:
     name: ca-certificates
     state: present
-    #disablerepo: epel
   when: ansible_os_family == "RedHat"
 
-#- name: enable dynamic ca configuration on rhel6
-  #shell: /bin/update-ca-trust enable
-  #when: ansible_os_family == "RedHat"  and ansible_distribution_major_version|int == 6
-
-- name: enable dynamic ca configuration on centos6
+- name: enable dynamic ca configuration on CentOS / RedHat 6
   shell: update-ca-trust force-enable
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version|int == 6
 
 - include: "epel.yml"
 - include: "ius.yml"
