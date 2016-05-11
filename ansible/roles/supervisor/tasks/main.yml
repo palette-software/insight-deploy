@@ -6,7 +6,7 @@
   #become_user: root
 
 - name: Install latest Supervisor via PIP
-  pip: name=supervisor state=present version={{ insight_supervisor_version }}
+  pip: name=supervisor state=present version={{ supervisor_version }}
 
 - name: Copy the supervisor init.d script
   copy: src=init.d/supervisord dest=/etc/init.d/supervisord owner=root group=root mode="u=rwx,g=rx,o=rx"

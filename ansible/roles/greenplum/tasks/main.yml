@@ -1,0 +1,31 @@
+---
+- include: "prepare-machine.yml"
+
+#- include: "compile.yml"
+
+- name: Register the current Greenplum version (if any)
+  command: bash -lc "gpstate -b | perl -l -ne '/postgres \(Greenplum Database\) (\d+\.\d+\.\d+\.\d+)/ && print $1'"
+  become: yes
+  become_user: gpadmin
+  ignore_errors: yes
+  register: gp_version
+  changed_when: false
+
+
+- include: "install.yml"
+  when: gp_version|failed or gp_version.stdout != greenplum_version_target
+
+#- name: Create the destination for the installer
+
+#- name: Extract the GP installer if GP is not yet installed or not the desired version
+  #unarchive: src=/usr/local/src/{{ greenplum_zip }}
+             #dest=/tmp/greenplum-install-{{ greenplum_version_target }}
+             #copy=no
+  #when: gp_version|failed or gp_version.stdout != greenplum_version_target
+
+#- name: Install the new version of GP
+  #shell: /usr/local/src/
+  #when: gp_version|failed or gp_version.stdout != greenplum_version_target
+
+- include: "data-setup.yml"
+  when: gp_version|failed or gp_version.stdout != greenplum_version_target

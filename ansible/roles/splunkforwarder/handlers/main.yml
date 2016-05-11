@@ -1,0 +1,6 @@
+---
+- name: Restart splunk
+  shell: /opt/splunkforwarder/bin/splunk restart --accept-license
+  become: yes
+  become_user: splunk
+

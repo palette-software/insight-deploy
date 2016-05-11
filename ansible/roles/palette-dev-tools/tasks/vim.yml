@@ -21,3 +21,4 @@
 # make sure the plugin install runs (as it asks for an enter keypress)
 - name: Install all Vundle plugins
   shell: "echo | echo | vim +PluginInstall +qall &>/dev/null"
+  become: no

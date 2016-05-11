@@ -4,22 +4,4 @@
   notify:
     - Restart palette-insight-server
     - Restart splunk
-    - Restart nginx
 
-#- name: Copy supervisord configuration
-  #copy: src=supervisor.conf dest=/etc/palette-insight-server/supervisor.conf
-  #notify:
-    #- Restart palette-insight-server
-    #- Restart splunk
-    #- Restart nginx
-
-#- name: (Re)start palette insight server via Supervisor
-  #supervisorctl: name=palette-insight-server state=restarted
-
-#- name: Restart splunk
-  #shell: /opt/splunkforwarder/bin/splunk restart --accept-license
-  #become: yes
-  #become_user: splunk
-
-#- name: Restart nginx
-  #service: name=nginx state=restarted
