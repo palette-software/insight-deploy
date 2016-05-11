@@ -1,0 +1,5 @@
+# Include the greenplum env shell script
+source {{ greenplum_install_dir }}/greenplum_path.sh
+
+# Set the greenplum properties
+MASTER_DATA_DIRECTORY={{ greenplum_datadir }}/master/gpsne-1
