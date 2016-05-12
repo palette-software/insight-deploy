@@ -6,3 +6,7 @@ greenplum_download_url: http://rpm.palette-software.net/install/greenplum/{{ gre
 greenplum_hosts_file: /etc/gphosts
 greenplum_user: gpadmin
 greenplum_default_db: palette
+
+
+greenplum_config:
+  statement_mem: 1000MB
