@@ -4,7 +4,7 @@
 #- include: "compile.yml"
 
 - name: Register the current Greenplum version (if any)
-  command: bash -lc "gpstate -b | perl -l -ne '/postgres \(Greenplum Database\) (\d+\.\d+\.\d+\.\d+)/ && print $1'"
+  command: bash -lc  "gpstate -b" | perl -l -ne '/postgres \(Greenplum Database\) (\d+\.\d+\.\d+\.\d+)/ && print $1'
   become: yes
   become_user: gpadmin
   ignore_errors: yes
