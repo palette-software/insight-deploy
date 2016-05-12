@@ -26,16 +26,15 @@
   become_user: "{{ greenplum_user }}"
   ignore_errors: yes
 
-
 - name: Fail if GpInitSystem failed
   fail: msg="GPInitSystem failiure"
   when: "'Greenplum Database instance successfully created' not in gpinitsystem_output.stdout"
 
-
 - name: Allow remote logins
-  lineinfile: dest={{ greenplum_datadir }}/master/gpsne-1/pg_hba.conf line="host all all 0.0.0.0/0 md5"
-  #become: yes
-  #become_user: "{{ greenplum_user }}"
+  lineinfile: dest={{ greenplum_datadir }}/master/gpsne-1/pg_hba.conf line={{ item }}
+  with_items:
+    - "local all all trust"
+    - "host all all 0.0.0.0/0 md5"
 
 - name: Tune Greenplum before the restart
   include: "tuning.yml"
