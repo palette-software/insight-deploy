@@ -1,16 +1,17 @@
 ---
-- include: "prepare-machine.yml"
 
 #- include: "compile.yml"
 
 - name: Register the current Greenplum version (if any)
-  command: bash -lc  "gpstate -b" | perl -l -ne '/postgres \(Greenplum Database\) (\d+\.\d+\.\d+\.\d+)/ && print $1'
+  shell: bash -lc  "gpstate -b" | perl -l -ne '/postgres \(Greenplum Database\) (\d+\.\d+\.\d+\.\d+)/ && print $1'
   become: yes
   become_user: gpadmin
   ignore_errors: yes
   register: gp_version
   changed_when: false
 
+- include: "prepare-machine.yml"
+  when: gp_version|failed or gp_version.stdout != greenplum_version_target
 
 - include: "install.yml"
   when: gp_version|failed or gp_version.stdout != greenplum_version_target
