@@ -15,25 +15,21 @@
   lineinfile: dest=/home/{{ greenplum_user }}/.bashrc regexp="^export MASTER_DATA_DIRECTORY=" line="export MASTER_DATA_DIRECTORY={{ greenplum_datadir }}/master/gpsne-1"
 
 - name: Exchange ssh keys using gpssh-exkeys & run gpinitsystem
-  shell: bash -lc "{{ item }}"
-  with_items:
-    - gpssh-exkeys -f {{ greenplum_hosts_file }}
-    - gpinitsystem -a -h {{ greenplum_hosts_file }} -c /home/{{ greenplum_user }}/gpinitsystem_singlenode
-
+  shell: bash -lc "gpssh-exkeys -f {{ greenplum_hosts_file }}"
   become: yes
   become_user: "{{ greenplum_user }}"
 
-#- name: Run gpinitsystem
-  #command: gpinitsystem -a -h {{ greenplum_hosts_file }} -c /home/{{ greenplum_user }}/gpinitsystem_singlenode
-  #ignore_errors: yes
-  #become: yes
-  #become_user: "{{ greenplum_user }}"
+- name: Run GpInitSystem
+  shell: bash -lc "gpinitsystem -a -h {{ greenplum_hosts_file }} -c /home/{{ greenplum_user }}/gpinitsystem_singlenode"
+  register: gpinitsystem_output
+  become: yes
+  become_user: "{{ greenplum_user }}"
+  ignore_errors: yes
 
 
-## gpinitsystem gets stuck while trying to connect to master, if
-## master's host key isn't already in known_hosts.
-#- name: Populate ssh known_hosts
-  #command: ssh -o StrictHostKeyChecking=false gpdb-test-master true
+- name: Fail if GpInitSystem failed
+  fail: msg="GPInitSystem failiure"
+  when: "'Greenplum Database instance successfully created' not in gpinitsystem_output.stdout"
 
 
 - name: Allow remote logins
@@ -41,18 +37,15 @@
   #become: yes
   #become_user: "{{ greenplum_user }}"
 
+- name: Tune Greenplum before the restart
+  include: "tuning.yml"
 
-- name: Reload config
-  shell: bash -lc "pg_ctl -D {{ greenplum_datadir }}/master/gpsne-1 reload"
-  become: yes
-  become_user: "{{ greenplum_user }}"
-
-#- name: Create Palette DB in GreenPlum
-  #shell: createdb palette
+#- notify: Reload greenplum config
+#- name: Reload config
+  #shell: bash -lc "pg_ctl -D {{ greenplum_datadir }}/master/gpsne-1 reload"
   #become: yes
   #become_user: "{{ greenplum_user }}"
-# gpseginstall -f {{ greenplum_hosts_file }} -u {{ greenplum_user }} -p Lofasz1234
-#
+
 #
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # gpconfig -c statement_mem -v 1000MB
