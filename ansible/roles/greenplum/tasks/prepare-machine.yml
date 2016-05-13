@@ -51,7 +51,7 @@
 
 - name: Add GreenPlum-required boot flags to the kernel (elevator=deadline transparent_hugepage=never)
   replace:
-    dest: /tmp/grub.conf
+    dest: /etc/grub.conf
     regexp: '^(\s+kernel)(.*)$'
     replace: '\1\2 elevator=deadline transparent_hugepage=never'
 

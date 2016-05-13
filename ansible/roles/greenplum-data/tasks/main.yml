@@ -1,4 +1,7 @@
 ---
+- name: Install required packages for greenplum
+  yum: name=ed state=present
+
 - name: Create /data/primary
   file: path={{ item }} state=directory owner={{ greenplum_user }} group=root mode="u=rwx,g=rx,o=rx"
   with_items:
@@ -8,13 +11,13 @@
 - name: Create gphosts file
   template: src=gphosts dest={{ greenplum_hosts_file }} owner=root group=root mode="u=rw,g=r,o=r"
 
-- name: Create gpinitsystem_singlenode file
+- name: Create gpinitsystem_singlenode file for {{ ansible_processor_vcpus }} segments
   template: src=gpinitsystem_singlenode dest=/home/{{ greenplum_user }}/gpinitsystem_singlenode owner={{ greenplum_user }} group={{ greenplum_user }}
 
 - name: Add MASTER_DATA_DIRECTORY to .bashrc
   lineinfile: dest=/home/{{ greenplum_user }}/.bashrc regexp="^export MASTER_DATA_DIRECTORY=" line="export MASTER_DATA_DIRECTORY={{ greenplum_datadir }}/master/gpsne-1"
 
-- name: Exchange ssh keys using gpssh-exkeys & run gpinitsystem
+- name: Exchange ssh keys using gpssh-exkeys
   shell: bash -lc "gpssh-exkeys -f {{ greenplum_hosts_file }}"
   become: yes
   become_user: "{{ greenplum_user }}"

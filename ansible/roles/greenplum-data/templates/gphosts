@@ -1,1 +1,1 @@
-localhost
+{{ greenplum_hostname }}
