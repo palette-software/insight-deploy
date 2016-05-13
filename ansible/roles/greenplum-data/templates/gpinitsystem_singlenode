@@ -57,13 +57,13 @@ PORT_BASE=40000
 # may want to create these directories on the segment hosts before running
 # gpinitsystem and chown them to the appropriate user.
 
-declare -a DATA_DIRECTORY=({{ greenplum_datadir }}/primary {{ greenplum_datadir }}/primary {{ greenplum_datadir }}/primary {{ greenplum_datadir }}/primary)
+declare -a DATA_DIRECTORY=({% for i in range(0,(ansible_processor_vcpus // 2)) %} {{ greenplum_datadir }}/primary {% endfor %})
 
 
 
 # The OS-configured hostname of the Greenplum Database master instance.
 
-MASTER_HOSTNAME=localhost
+MASTER_HOSTNAME={{ greenplum_hostname }}
 
 
 # The location where the data directory will be created on the

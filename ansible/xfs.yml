@@ -24,5 +24,5 @@
       filesystem: fstype=xfs dev={{ mount_dev }}
 
     - name: edit fstab and mount the vol
-      action: mount name={{ mount_dir }} src={{ mount_dev }} opts=noatime fstype=xfs state=mounted
+      mount: name={{ mount_dir }} src={{ mount_dev }} opts=noatime fstype=xfs state=mounted opts="rw,noatime,inode64,allocsize=16m"
 
