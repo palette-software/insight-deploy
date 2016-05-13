@@ -2,7 +2,6 @@
 - name: Install Palette Insight
   hosts: insight-server
   remote_user: "{{ uservar }}"
-  # remote_user: user
   become: yes
   become_user: root
 
@@ -13,4 +12,5 @@
     - supervisor
     - splunkforwarder
     - golang
+    - greenplum
     - insight-server

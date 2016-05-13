@@ -1,0 +1,28 @@
+---
+- name: Mount & format XFS data volumes
+  hosts: insight-server
+  remote_user: "{{ uservar }}"
+  become: yes
+  become_user: root
+  vars:
+    mount_dir: /data
+    # Note: Newer linux kernels may rename your devices to /dev/xvdf through
+    # /dev/xvdp internally, even when the device name entered here (and shown in
+    # the details) is /dev/sdf through /dev/sdp.
+    #
+    mount_dev: /dev/xvdb
+
+  tasks:
+
+    - name: update packages
+      yum: name=* state=latest
+
+    - name: install xfsprogs
+      yum: pkg=xfsprogs state=latest
+
+    - name: format new volume
+      filesystem: fstype=xfs dev={{ mount_dev }}
+
+    - name: edit fstab and mount the vol
+      action: mount name={{ mount_dir }} src={{ mount_dev }} opts=noatime fstype=xfs state=mounted
+

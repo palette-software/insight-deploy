@@ -1,28 +1,6 @@
-
-- name: Download the greenplum installer binary
-  get_url: url={{ greenplum_download_url }}
-           dest=/usr/local/src/{{ greenplum_zip }}
-
-- name: Create the destination for the installer
-  file: path={{ item }} state=directory
-  with_items:
-    - /tmp/greenplum-install-{{ greenplum_version_target }}
-    - "{{ greenplum_install_dir }}"
-
-- name: Extract the GP installer if GP is not yet installed or not the desired version
-  unarchive: src=/usr/local/src/{{ greenplum_zip }}
-             dest=/tmp/greenplum-install-{{ greenplum_version_target }}
-             copy=no
-
-- name: Copy the greenplum installation helper script
-  copy: src=install_gp.sh dest=/tmp/install_gp.sh mode="u=rwx,g=rx,o=rx"
-
-- name: Run the greenplum install helper scring
-  shell: /tmp/install_gp.sh /tmp/greenplum-install-{{ greenplum_version_target }}/{{ greenplum_installer_bin }} {{ greenplum_install_dir }}
-
-- name: Symlink greenplum-db to greenplum prefix folder
-  file: src={{ greenplum_install_dir }}
-        dest={{ greenplum_prefix }}/greenplum-db owner={{ greenplum_user }} group={{ greenplum_user }} state=link
+---
+- name: Install Greenplum from the greenplum-metal-{{ greenplum_version_rpm }} package
+  yum: name=greenplum-metal-{{ greenplum_version_rpm }} state=present
 
 - name: Update the install path in greenplum_path.sh
   lineinfile:
@@ -30,24 +8,9 @@
     regexp: "^GPHOME=.*"
     line: "GPHOME={{greenplum_install_dir}}"
 
-
-
 - name: Source the greenplum shell scripts in the {{ greenplum_user }} user bashrc
   lineinfile:
     dest: /home/{{ greenplum_user }}/.bashrc
     regexp: "^source .*greenplum_path.sh"
     line: "source {{ greenplum_install_dir }}/greenplum_path.sh"
 
-#installDir=`basename ${installPath}`
-#symlinkPath=`dirname ${installPath}`
-#symlinkLink=greenplum-db
-#if [ x"${symlinkLink}" != x"${installDir}" ]; then
-    #if [ "`ls ${symlinkPath}/${symlinkLink} 2> /dev/null`" = "" ]; then
-        #ln -s "./${installDir}" "${symlinkPath}/${symlinkLink}"
-    #fi
-#fi
-#sed "s,^GPHOME.*,GPHOME=${installPath}," ${installPath}/greenplum_path.sh > ${installPath}/greenplum_path.sh.tmp
-#mv ${installPath}/greenplum_path.sh.tmp ${installPath}/greenplum_path.sh
-
-#$ cp /usr/local/greenplum-db/docs/cli_help/gpconfigs/gpinitsystem_singlenode /Users/{{ greenplum_user }}/.
-#$ cp /usr/local/greenplum-db/docs/cli_help/gpconfigs/hostlist_singlenode /Users /{{ greenplum_user }}/.

@@ -40,13 +40,19 @@
     - { name: "net.core.rmem_max", value: 2097152 }
     - { name: "net.core.wmem_max", value: 2097152 }
     - { name: "vm.overcommit_memory", value: 2 }
+    - { name: "vm.overcommit_ratio", value: 95 }
 
 - name: Reload sysctl
   command: /sbin/sysctl -p
 
-#- name: Install packages needed to build GPDB
-  #yum: name="gcc,gcc-c++,git,bison,flex,readline-devel,zlib-devel,curl-devel,bzip2-devel,python-devel"
-  #
+- name: Set disk device to have a read-ahead (blockdev) of 16384 for all mounted devices
+  command: /sbin/blockdev --setra 16384 {{ item.device }}
+  with_items: "{{ ansible_mounts }}"
 
-# more stuff:
-# /usr/local/greenplum-db/lib/bin/gpcheckcat -p 5432 palette
+- name: Add GreenPlum-required boot flags to the kernel (elevator=deadline transparent_hugepage=never)
+  replace:
+    dest: /tmp/grub.conf
+    regexp: '^(\s+kernel)(.*)$'
+    replace: '\1\2 elevator=deadline transparent_hugepage=never'
+
+# FIXME: add a stable reboot here
