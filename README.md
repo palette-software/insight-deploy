@@ -1,5 +1,23 @@
 # Palette Insight Deployment
 
+
+## Invatory files
+
+An example inventory file:
+
+```ini
+[early-adopter]
+HOST_NAME  splunk_host=HOST_NAME_FOR_SPLUNK
+
+[early-adopter:vars]
+channel: early_adopter
+
+
+[insight-server:children]
+early-adopter
+
+```
+
 ## Creating Greenplum Metal RPMs
 
 On a linux box with rpm-build installed:
