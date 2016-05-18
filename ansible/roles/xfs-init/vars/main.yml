@@ -1,0 +1,7 @@
+---
+mount_dir: /data
+# Note: Newer linux kernels may rename your devices to /dev/xvdf through
+# /dev/xvdp internally, even when the device name entered here (and shown in
+# the details) is /dev/sdf through /dev/sdp.
+#
+mount_dev: /dev/xvdb
