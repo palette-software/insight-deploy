@@ -1,4 +1,7 @@
 ---
+- name: update packages
+  yum: name=* state=latest
+
 - name: install ca package on rhel systems
   yum:
     name: ca-certificates
