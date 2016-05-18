@@ -1,0 +1,3 @@
+[submodule "ansible/library"]
+	path = ansible/library
+	url = https://github.com/palette-software/ansible-grubconfig.git
