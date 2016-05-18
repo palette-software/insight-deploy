@@ -25,3 +25,6 @@
 
 - name: Install PIP
   package: name=python-pip state=present
+
+- name: Disable IpTables (should use EC2 Security Groups)
+  service: name=iptables enabled=no state=stopped

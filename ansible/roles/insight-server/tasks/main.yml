@@ -1,6 +1,6 @@
 ---
 - name: Install Insight Server package
-  yum: name=palette-insight-server state=latest
+  yum: name=palette-insight-server state=latest update_cache=yes
   notify:
     - Restart palette-insight-server
     - Restart splunk

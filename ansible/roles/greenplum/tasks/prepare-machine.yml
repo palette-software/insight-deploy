@@ -50,9 +50,9 @@
   with_items: "{{ ansible_mounts }}"
 
 - name: Add GreenPlum-required boot flags to the kernel (elevator=deadline transparent_hugepage=never)
-  replace:
-    dest: /etc/grub.conf
-    regexp: '^(\s+kernel)(.*)$'
-    replace: '\1\2 elevator=deadline transparent_hugepage=never'
+  grubconf: flag={{ item.name }} value={{ item.value }}
+  with_items:
+    - { name: elevator, value: deadline }
+    - { name: transparent_hugepage, value: never }
 
 # FIXME: add a stable reboot here
