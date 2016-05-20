@@ -4,4 +4,6 @@
   notify:
     - Restart palette-insight-server
     - Restart splunk
+    - Restart nginx
+
 

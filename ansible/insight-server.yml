@@ -14,3 +14,4 @@
     - golang
     - greenplum
     - insight-server
+    - insight-loadtables

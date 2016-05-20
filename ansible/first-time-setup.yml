@@ -16,4 +16,5 @@
     - greenplum
     - greenplum-data
     - insight-server
+    - insight-loadtables
 
