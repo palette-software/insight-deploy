@@ -1,0 +1,10 @@
+---
+- name: Post-installation tasks
+  hosts: insight-server
+  remote_user: "{{ uservar }}"
+  become: yes
+  become_user: root
+
+  roles:
+    - insight-loadtables
+
