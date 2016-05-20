@@ -1,0 +1,3 @@
+---
+- name: Install Insight-loadTables to /opt/palette-insight-loadtables
+  yum: name=palette-insight-loadtables state=latest update_cache=yes
