@@ -1,0 +1,3 @@
+---
+insight_talend_location: /opt/palette-insight-talend
+greenplum_install_path: /usr/local/greenplum-db

@@ -1,10 +1,27 @@
 ---
-- name: Install Insight-loadTables to /opt/palette-insight-talend
+- name: Install Insight-loadTables to {{ insight_talend_location }}
   yum: name=palette-insight-loadtables state=latest update_cache=yes
 
-- name: Create the upload directory for insight-server uploads (based on license id)
-  file: path=/data/insight-server/uploads/{{ cluster_name }} state=directory mode=0755 owner=insight group=insight
+- name: Create directories for uploading and processing in /data/insight-server/uploads/{{ cluster_name }}
+  file: path=/data/insight-server/uploads/{{ cluster_name }}{{ item }} state=directory mode=0755 owner=insight group=insight
+  with_items:
+    - ""
+    - /processing
+
+#- name: Create the upload directory for insight-server uploads (based on license id)
+  #file: path=/data/insight-server/uploads/{{ cluster_name }} state=directory mode=0755 owner=insight group=insight
+
+#- name: Create the processing directory for insight-server uploads (based on license id)
+  #file: path=/data/insight-server/uploads/{{ cluster_name }}/processing state=directory mode=0755 owner=insight group=insight
 
 - name: Create the start_gpfdist.sh
-  template: src=start_gpfdist.sh dest=/data/insight-server/uploads/{{ cluster_name }}/start_gpfdist.sh owner=insight group=insight mode=755
+  template: src=start_gpfdist.sh dest={{ insight_talend_location }}/start_gpfdist.sh owner=insight group=insight mode=755
+
+- name: Create log directory for insight-gpfdist
+  file: path=/var/log/insight-gpfdist state=directory mode=0755 owner=root group=root
+
+- name: Create the insight-gpfdist service via supervisord
+  template: src=insight-gpfdist.ini dest=/etc/supervisord.d/insight-gpfdist.ini owner=root group=root mode=664
+
+
 
