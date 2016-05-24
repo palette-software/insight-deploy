@@ -1,6 +1,6 @@
 ---
 - name: Install Palette Dev Team tools
-  yum: name=git,curl,wget,screen,tmux,htop,mosh,gzip,unzip state=present
+  yum: name=git,curl,wget,screen,tmux,htop,mosh,lsof,gzip,unzip state=present
 
 - name: Install OpenJDK (1.8)
   yum: name=java-1.8.0-openjdk state=present
