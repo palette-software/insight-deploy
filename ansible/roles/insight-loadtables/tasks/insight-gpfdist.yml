@@ -1,0 +1,12 @@
+
+- name: Create the start_gpfdist.sh
+  template: src=start_gpfdist.sh dest={{ insight_talend_location }}/start_gpfdist.sh owner=insight group=insight mode=755
+
+- name: Create log directory for insight-gpfdist
+  file: path=/var/log/insight-gpfdist state=directory mode=0755 owner=root group=root
+
+- name: Create the insight-gpfdist service via supervisord
+  template: src=insight-gpfdist.ini dest=/etc/supervisord.d/insight-gpfdist.ini owner=root group=root mode=664
+
+- name: (Re)start insight-gpfdist via supervisord
+  supervisorctl: name=insight-gpfdist state=restarted
