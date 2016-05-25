@@ -12,4 +12,4 @@ cd /data/insight-server/uploads/{{ cluster_name }}/processing
 
 # Start gpfidst in background, but dont log to stdout instead of
 # a logfile
-gpfdist -p 18001 -v -m 268435456
+gpfdist -p {{ gpfdist_port }} -v -m 268435456

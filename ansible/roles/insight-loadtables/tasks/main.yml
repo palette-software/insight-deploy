@@ -1,4 +1,8 @@
 ---
+- name: Install psycopg2 for ansible to momdify postgres
+  yum: name=python-psycopg2 state=present
+
+
 - name: Install Insight-loadTables to {{ insight_talend_location }}
   yum: name=palette-insight-loadtables state=latest update_cache=yes
 
@@ -8,20 +12,92 @@
     - ""
     - /processing
 
-#- name: Create the upload directory for insight-server uploads (based on license id)
-  #file: path=/data/insight-server/uploads/{{ cluster_name }} state=directory mode=0755 owner=insight group=insight
 
-#- name: Create the processing directory for insight-server uploads (based on license id)
-  #file: path=/data/insight-server/uploads/{{ cluster_name }}/processing state=directory mode=0755 owner=insight group=insight
+- name: Add palette users to GP
+  become_user: "gpadmin"
+  postgresql_user: name={{ item.name }} db=palette password={{ item.pass }} priv={{ item.priv }} login_user=gpadmin
+  with_items: "{{ insight_gp_users }}"
 
-- name: Create the start_gpfdist.sh
-  template: src=start_gpfdist.sh dest={{ insight_talend_location }}/start_gpfdist.sh owner=insight group=insight mode=755
+- name: psql check schema {{ insight_schema_name }}
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -t -d {{ insight_database_name }}
+    -c "SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = '{{ insight_schema_name }}');"
+  become: yes
+  become_user: gpadmin
+  register: check_schema
+  changed_when: false
+  #changed_when: "'f' in check_schema.stdout"
+  ignore_errors: yes
 
-- name: Create log directory for insight-gpfdist
-  file: path=/var/log/insight-gpfdist state=directory mode=0755 owner=root group=root
 
-- name: Create the insight-gpfdist service via supervisord
-  template: src=insight-gpfdist.ini dest=/etc/supervisord.d/insight-gpfdist.ini owner=root group=root mode=664
+- name: psql schema {{ insight_schema_name }}
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -d {{ insight_database_name }}
+    -c "CREATE SCHEMA {{ insight_schema_name }};"
+  become: yes
+  become_user: gpadmin
+  when: "'f' in check_schema.stdout"
 
+- name: psql place {{ insight_schema_name }} before public
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -d {{ insight_database_name }}
+    -c "ALTER USER {{ item.name }} SET search_path TO {{ insight_schema_name }}, public;"
+  become_user: gpadmin
+  #when: check_schema.changed
+  when: "'f' in check_schema.stdout"
+  with_items: "{{ insight_gp_users }}"
+
+
+
+#- name: psql grant access to schema {{ insight_schema_name }} to all
+  #postgresql_privs: database={{ insight_database_name }} type=schema objs={{ insight_schema_name }} roles=PUBLIC privs=USAGE
+  #become_user: gpadmin
+
+#- name: psql grant access to tables of schema {{ insight_schema_name }}
+  #postgresql_privs: database={{ insight_database_name }} schema={{ insight_schema_name }} type=table objs=ALL_IN_SCHEMA roles=PUBLIC privs=SELECT
+  #become_user: gpadmin
+
+- include: "insight-gpfdist.yml"
+
+- name: Create the Talend loadtables runner script
+  template: src=load_tables_runner.sh dest={{ insight_talend_location }}/load_tables_runner.sh owner=insight group=insight mode=755
+
+- name: Create the Talend config.xml in /data/insight-server/uploads/{{ cluster_name }}
+  template: src=config.xml dest=/data/insight-server/uploads/{{ cluster_name }}/config.xml owner=insight group=insight mode=640
+
+- name: Create the load_tables.sh script
+  template: src=load_tables.sh dest={{ insight_talend_location }}/load_tables.sh owner=insight group=insight mode=755
+
+- name: Create the run_reporting.sh script
+  template: src=run_reporting.sh dest={{ insight_talend_location }}/run_reporting.sh owner=insight group=insight mode=755
+
+#- name: Add palette users to GP
+  #debug: msg=""
+#- name: Create palette schema in GP
+  #debug: msg=""
+#- name: Start GPFDist
+  #debug: msg=""
+
+- name: Run initial loadtables to generate tables in GP
+  become_user: insight
+  shell: "{{ insight_talend_location }}/load_tables.sh"
+
+- name: Run the creation SQL
+  debug: msg=""
+
+- name: Add talend loadtables to crontab (run every minute)
+  cron: user=insight name="Palette Insight Load Tables" job="{{ insight_talend_location }}/load_tables.sh"
+
+#- name: Run fullinstall.sql
+  #shell: "psql
+
+- name: Add reporting to crontab (every five minutes)
+  cron: user=insight name="Palette Insight Load Tables" minute="5-55/5" job="{{ insight_talend_location }}/load_tables.sh"
 
 

@@ -42,15 +42,6 @@
 - name: Tune Greenplum before the restart
   include: "tuning.yml"
 
-#- name: Add palette users to GP
-#- name: Create palette schema in GP
-#- name: Start GPFDist
-#- name: Run initial loadtables to generate tables in GP
-#- name: Run the creation SQL
-#- name: Add talend loadtables to crontab
-#- name: Run fullinstall.sql
-#- name: Add reporting to crontab
-
 #- notify: Reload greenplum config
 #- name: Reload config
   #shell: bash -lc "pg_ctl -D {{ greenplum_datadir }}/master/gpsne-1 reload"

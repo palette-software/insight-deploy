@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<TalendnConfig xmlns="Talend">
+
+  <!-- Target database configuration -->
+
+<!-- The parameters here are optional if not specified we use their default values, which are filled -->
+<!--
+    Tar_Host="localhost"
+    Tar_Port="5432"
+    Tar_Username="palette_etl_user"
+    Tar_Password="palette123"
+    Tar_Db="palette"
+    greenplum_path="/usr/local/greenplum-db/greenplum_path.sh"
+-->
+  <Target_Database
+    gpfdist_addr="localhost:{{ gpfdist_port }}"
+    Tar_Schema="{{ insight_schema_name }}"
+    Tar_Username="palette"
+    Tar_Password="palette123"
+/>
+<!-- target schema / source folder and gpfdist_addr goes hand-in-hand -->
+
+<!-- Optional filetype can be csv (old version) or gz new version default is gz-->
+   <Agent filetype="gz"  />
+ <TableauRepo>
+
+      <!-- Tables with SCD, here pk can be multiple column  -->
+      <Table_names name="users" type="full" scd="yes" pk="id"/>
+      <Table_names name="sites" type="full" scd="yes" pk="id"/>
+      <Table_names name="projects" type="full" scd="yes" pk="id"/>
+      <Table_names name="workbooks" type="full" scd="yes" pk="id"/>
+      <Table_names name="views" type="full" scd="yes" pk="id"/>
+      <Table_names name="system_users" type="full" scd="yes" pk="id"/>
+      <Table_names name="core_licenses" type="full" scd="yes" pk="machine_ip"/>
+      <Table_names name="data_connections" type="full" scd="yes" pk="id"/>
+      <Table_names name="datasources" type="full" scd="yes" pk="id"/>
+      <Table_names name="monitoring_postgresql" type="full" scd="yes" pk="pk"/>
+      <Table_names name="monitoring_dataengine" type="full" scd="yes" pk="pk"/>
+      <Table_names name="extracts" type="full" scd="yes" pk="id"/>
+      <Table_names name="groups" type="full" scd="yes" pk="id"/>
+      <Table_names name="group_users" type="full" scd="yes" pk="id"/>
+      <Table_names name="tasks" type="full" scd="yes" pk="id"/>
+      <Table_names name="schedules" type="full" scd="yes" pk="id"/>
+
+      <!-- Append only tables from the tableau repository these are not used currently -->
+      <Table_names name="hist_tasks" type="incremental"/>
+      <Table_names name="hist_datasources" type="incremental"/>
+      <Table_names name="hist_views" type="incremental"/>
+      <Table_names name="hist_comments" type="incremental"/>
+      <Table_names name="hist_groups" type="incremental"/>
+      <Table_names name="hist_projects" type="incremental"/>
+      <Table_names name="hist_licensing_roles" type="incremental"/>
+      <Table_names name="hist_users" type="incremental"/>
+      <Table_names name="hist_sites" type="incremental"/>
+      <Table_names name="hist_data_connections" type="incremental"/>
+      <Table_names name="hist_schedules" type="incremental"/>
+      <Table_names name="hist_workbooks" type="incremental"/>
+      <Table_names name="historical_events" type="incremental"/>
+
+      <!-- Append only tables from the tableau repository -->
+      <Table_names name="http_requests" type="incremental"/>
+      <Table_names name="async_jobs" type="incremental" />
+      <Table_names name="background_jobs" type="incremental"/>
+
+      <!-- Append only tables from the Palette Insight Agents -->
+      <Table_names name="countersamples" type="incremental"/>
+      <Table_names name="serverlogs" type="incremental"/>
+      <Table_names name="threadinfo" type="incremental"/>
+      <Table_names name="plainlogs" type="incremental"/>
+  </TableauRepo>
+
+</TalendnConfig>
+
