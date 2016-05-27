@@ -16,15 +16,7 @@
 - include: "insight-gpfdist.yml"
 - include: "talend-jobs.yml"
 
-#- name: Add palette users to GP
-  #debug: msg=""
-#- name: Create palette schema in GP
-  #debug: msg=""
-#- name: Start GPFDist
-  #debug: msg=""
-
-- name: Install Insight-reporting to /opt/palette-insight-reporting
-  yum: name=palette-insight-reporting state=latest update_cache=yes
+- include: "install-reporting.yml"
 
 - name: Run initial loadtables to generate tables in GP
   become_user: insight
