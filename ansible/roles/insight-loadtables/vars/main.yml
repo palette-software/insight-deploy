@@ -11,7 +11,21 @@ gpfdist_port: 18010
 palette_etl_user: palette_etl_user
 palette_etl_user_pass: palette123
 
+reporting_resource_queue_name: reporting
+
+#Users in priority order (top highest):
+
+#1. readonly (pw: onlyread) (RO)
+#2. palette (pw: palette123) (RW)
+#3. palette_etl_user (pw: palette123) (RW)
+#4. palette_extract_user (pw: palette123) (RO)
+insight_gp_roles:
+  - { name: "palette_palette_looker", priv: "ALL", role_attr_flags: "NOLOGIN"}
+  - { name: "palette_palette_updater", priv: "ALL", role_attr_flags: "NOLOGIN" }
+
 insight_gp_users:
-  - { name: "palette", pass: "palette123", priv: "ALL" }
-  - { name: "readonly", pass: "paletter34donly", priv: "ALL" }
+  - { name: "readonly", pass: "onlyread", priv: "ALL", role_attr_flags: ""}
+  - { name: "palette", pass: "palette123", priv: "ALL", role_attr_flags: "SUPERUSER" }
+  - { name: "palette_etl_user", pass: "palette123", priv: "ALL" , role_attr_flags: "CREATEEXTTABLE"}
+  - { name: "palette_extract_user", pass: "palette123", priv: "ALL", role_attr_flags: ""}
 

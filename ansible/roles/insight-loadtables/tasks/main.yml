@@ -23,6 +23,9 @@
 #- name: Start GPFDist
   #debug: msg=""
 
+- name: Install Insight-reporting to /opt/palette-insight-reporting
+  yum: name=palette-insight-reporting state=latest update_cache=yes
+
 - name: Run initial loadtables to generate tables in GP
   become_user: insight
   shell: "{{ insight_talend_location }}/load_tables.sh"
