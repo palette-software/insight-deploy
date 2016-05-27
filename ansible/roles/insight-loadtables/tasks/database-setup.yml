@@ -1,0 +1,51 @@
+---
+- name: Add palette users to GP
+  become_user: "gpadmin"
+  postgresql_user: name={{ item.name }} db=palette password={{ item.pass }} priv={{ item.priv }} login_user=gpadmin
+  with_items: "{{ insight_gp_users }}"
+
+- name: psql check schema {{ insight_schema_name }}
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -t -d {{ insight_database_name }}
+    -c "SELECT EXISTS(SELECT 1 FROM pg_namespace WHERE nspname = '{{ insight_schema_name }}');"
+  become: yes
+  become_user: gpadmin
+  register: check_schema
+  changed_when: false
+  #changed_when: "'f' in check_schema.stdout"
+  ignore_errors: yes
+
+
+- name: psql schema {{ insight_schema_name }}
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -d {{ insight_database_name }}
+    -c "CREATE SCHEMA {{ insight_schema_name }};"
+  become: yes
+  become_user: gpadmin
+  when: "'f' in check_schema.stdout"
+
+- name: psql place {{ insight_schema_name }} before public
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -d {{ insight_database_name }}
+    -c "ALTER USER {{ item.name }} SET search_path TO {{ insight_schema_name }}, public;"
+  become_user: gpadmin
+  #when: check_schema.changed
+  when: "'f' in check_schema.stdout"
+  with_items: "{{ insight_gp_users }}"
+
+
+
+#- name: psql grant access to schema {{ insight_schema_name }} to all
+  #postgresql_privs: database={{ insight_database_name }} type=schema objs={{ insight_schema_name }} roles=PUBLIC privs=USAGE
+  #become_user: gpadmin
+
+#- name: psql grant access to tables of schema {{ insight_schema_name }}
+  #postgresql_privs: database={{ insight_database_name }} schema={{ insight_schema_name }} type=table objs=ALL_IN_SCHEMA roles=PUBLIC privs=SELECT
+  #become_user: gpadmin
+

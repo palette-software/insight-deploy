@@ -1,7 +1,4 @@
 
-- name: Create the start_gpfdist.sh
-  template: src=start_gpfdist.sh dest={{ insight_talend_location }}/start_gpfdist.sh owner=insight group=insight mode=755
-
 - name: Create log directory for insight-gpfdist
   file: path=/var/log/insight-gpfdist state=directory mode=0755 owner=root group=root
 
