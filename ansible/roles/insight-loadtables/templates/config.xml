@@ -15,8 +15,8 @@
   <Target_Database
     gpfdist_addr="localhost:{{ gpfdist_port }}"
     Tar_Schema="{{ insight_schema_name }}"
-    Tar_Username="palette"
-    Tar_Password="palette123"
+    Tar_Username="{{ palette_etl_user }}"
+    Tar_Password="{{ palette_etl_user_pass }}"
 />
 <!-- target schema / source folder and gpfdist_addr goes hand-in-hand -->
 

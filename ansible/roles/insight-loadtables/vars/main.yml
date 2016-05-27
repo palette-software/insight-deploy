@@ -1,11 +1,15 @@
 ---
 insight_talend_location: /opt/palette-insight-talend
 greenplum_install_path: /usr/local/greenplum-db
+talend_log_path: /var/log/palette-insight-talend
 
 insight_database_name: palette
 insight_schema_name: palette
 
 gpfdist_port: 18010
+
+palette_etl_user: palette_etl_user
+palette_etl_user_pass: palette123
 
 insight_gp_users:
   - { name: "palette", pass: "palette123", priv: "ALL" }

@@ -1,0 +1,2 @@
+#!/bin/sh
+cat aws-hosts2.ini | sed 's/^#.*$//'
