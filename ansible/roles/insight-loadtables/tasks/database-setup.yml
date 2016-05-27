@@ -1,9 +1,11 @@
 ---
-- name: Add palette users to GP
-  become_user: "gpadmin"
-  postgresql_user: name={{ item.name }} db=palette password={{ item.pass }} priv={{ item.priv }} login_user=gpadmin
-  with_items: "{{ insight_gp_users }}"
 
+# ROLE SETUP
+# ==========
+
+# ===================================== SCHEMA ============================================
+
+# Create schema palette
 - name: psql check schema {{ insight_schema_name }}
   shell: >
     source {{ greenplum_install_path }}/greenplum_path.sh &&
@@ -28,24 +30,94 @@
   become_user: gpadmin
   when: "'f' in check_schema.stdout"
 
-- name: psql place {{ insight_schema_name }} before public
+
+# ===================================== ROLES ============================================
+
+#CREATE ROLE palette_#schema_name#_looker;
+#CREATE ROLE palette_#schema_name#_updater;
+- name: Create GP palette roles
+  become_user: "gpadmin"
+  postgresql_user: name={{ item.name }} db=palette priv={{ item.priv }} role_attr_flags={{ item.role_attr_flags }} state=present login_user=gpadmin
+  with_items: "{{ insight_gp_roles }}"
+
+#create role readonly with login password 'onlyread';
+#create role palette_etl_user with login password 'palette123';
+#alter role palette_etl_user with CREATEEXTTABLE;
+- name: Create GP palette users
+  become_user: "gpadmin"
+  postgresql_user: name={{ item.name }} db=palette password={{ item.pass }} priv={{ item.priv }} login_user=gpadmin
+  with_items: "{{ insight_gp_users }}"
+
+# grant usage on schema #schema_name# to palette_#schema_name#_looker;
+# grant all on schema #schema_name# to palette_#schema_name#_updater;
+- name: "Granting: grant usage on schema {{ insight_schema_name }} to palette_{{ insight_schema_name }}_looker;"
+  postgresql_privs: database=palette priv=usage type=schema objs={{ insight_schema_name }} role=palette_{{ insight_schema_name }}_looker login_user=gpadmin
+  become_user: "gpadmin"
+
+- name: "Granting: grant all on schema {{ insight_schema_name }} to palette_{{ insight_schema_name }}_updater;"
+  postgresql_privs: database=palette priv=all type=schema objs={{ insight_schema_name }} role=palette_{{ insight_schema_name }}_updater login_user=gpadmin
+  become_user: "gpadmin"
+
+#grant palette_#schema_name#_looker to readonly;
+- name: "Granting: grant palette_{{ insight_schema_name }}_looker to readonly;"
+  postgresql_privs: database=palette type=group objs=palette_{{ insight_schema_name }}_looker roles=readonly login_user=gpadmin
+  become_user: "gpadmin"
+
+#grant palette_#schema_name#_looker to palette_extract_user;
+- name: "Granting: grant palette_{{ insight_schema_name }}_looker to palette_extract_user;"
+  postgresql_privs: database=palette type=group objs=palette_{{ insight_schema_name }}_looker roles=palette_extract_user login_user=gpadmin
+  become_user: "gpadmin"
+
+#grant palette_#schema_name#_updater to palette_etl_user;
+- name: "Granting: grant palette_{{ insight_schema_name }}_updater to palette_etl_user;"
+  postgresql_privs: database=palette type=group objs=palette_{{ insight_schema_name }}_updater roles=palette_etl_user login_user=gpadmin
+  become_user: "gpadmin"
+
+
+# ===================================== RESOURCE QUEUE ============================================
+
+#CREATE RESOURCE QUEUE reporting WITH (ACTIVE_STATEMENTS=10, PRIORITY=MAX);
+- name: "Check: {{ reporting_resource_queue_name }} resource queue"
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -t -d {{ insight_database_name }}
+    -c "select count(*) != 0 from  gp_toolkit.gp_resqueue_status WHERE rsqname='{{ reporting_resource_queue_name }}'"
+  become: yes
+  become_user: gpadmin
+  register: check_reporting_resource_queue
+  changed_when: false
+  #changed_when: "'f' in check_schema.stdout"
+  ignore_errors: yes
+
+
+- name: CREATE RESOURCE QUEUE reporting WITH (ACTIVE_STATEMENTS=10, PRIORITY=MAX); 
   shell: >
     source {{ greenplum_install_path }}/greenplum_path.sh &&
     {{greenplum_install_path}}/bin/psql
     -d {{ insight_database_name }}
-    -c "ALTER USER {{ item.name }} SET search_path TO {{ insight_schema_name }}, public;"
+    -c "CREATE RESOURCE QUEUE {{ reporting_resource_queue_name }} WITH (ACTIVE_STATEMENTS=10, PRIORITY=MAX);"
+  become: yes
   become_user: gpadmin
-  #when: check_schema.changed
-  when: "'f' in check_schema.stdout"
-  with_items: "{{ insight_gp_users }}"
+  when: "'f' in check_reporting_resource_queue.stdout"
+
+- name: Alter readonly role (RESOURCE QUEUE reporting, random_page_cost=20, optimizer=on)
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -d {{ insight_database_name }}
+    -c "{{ item }}"
+  become: yes
+  become_user: gpadmin
+  with_items:
+    - ALTER ROLE readonly RESOURCE QUEUE reporting;
+    - alter user readonly set random_page_cost=20;
+    - alter user readonly set optimizer=on;
 
 
 
-#- name: psql grant access to schema {{ insight_schema_name }} to all
-  #postgresql_privs: database={{ insight_database_name }} type=schema objs={{ insight_schema_name }} roles=PUBLIC privs=USAGE
-  #become_user: gpadmin
 
-#- name: psql grant access to tables of schema {{ insight_schema_name }}
-  #postgresql_privs: database={{ insight_database_name }} schema={{ insight_schema_name }} type=table objs=ALL_IN_SCHEMA roles=PUBLIC privs=SELECT
-  #become_user: gpadmin
+
+
+
 
