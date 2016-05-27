@@ -1,0 +1,20 @@
+---
+- name: Install Insight-reporting to /opt/palette-insight-reporting
+  yum: name=palette-insight-reporting state=latest update_cache=yes
+
+- name: Run initial loadtables to generate tables in GP
+  become_user: insight
+  shell: "{{ insight_talend_location }}/load_tables.sh"
+
+- name: Create the sql script for creating and dropping dummy_to_create_ext_error_table
+  template: src=create_external_dummy_table.sql dest=/tmp/create_external_dummy_table.sql owner=gpadmin group=gpadmin
+
+- name: Create and drop the dummy_to_create_ext_error_table using the script
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -d {{ insight_database_name }}
+    -f /tmp/create_external_dummy_table.sql
+  become: yes
+  become_user: gpadmin
+
