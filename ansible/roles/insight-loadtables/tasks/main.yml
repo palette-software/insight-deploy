@@ -16,28 +16,7 @@
 - include: "database-setup.yml"
 - include: "insight-gpfdist.yml"
 - include: "talend-jobs.yml"
-
 - include: "install-reporting.yml"
-
-#- name: Run initial loadtables to generate tables in GP
-  #become_user: insight
-  #shell: "{{ insight_talend_location }}/load_tables.sh"
-  #when: false
-
-#- name: Run the creation SQL
-  #debug: msg=""
-  #when: false
-
-
-
-- name: Add talend loadtables to crontab (run every minute)
-  cron: user=insight name="Palette Insight Load Tables" job="{{ insight_talend_location }}/load_tables.sh"
+- include: "crontab-tasks.yml"
   when: false
-
-#- name: Run fullinstall.sql
-  #shell: "psql
-
-#- name: Add reporting to crontab (every five minutes)
-  #cron: user=insight name="Palette Insight Load Tables" minute="5-55/5" job="{{ insight_talend_location }}/load_tables.sh"
-
 
