@@ -13,6 +13,7 @@ do
   if [ ! -d $dirName ]
   then
     echo "+ Creating: $dirName in `pwd`"
+    mkdir -p $dirname
   else
     echo "Skipping: $dirName"
   fi
@@ -20,12 +21,12 @@ done
 
 for dirName in tasks handlers vars meta
 do
-  if [ ! -f $dirName/mail.yml ]
+  if [ ! -f $dirName/main.yml ]
   then
-    echo "+ Adding mail.yml to: $dirName in `pwd`"
+    echo "+ Adding main.yml to: $dirName in `pwd`"
     echo "---" > $dirName/main.yml
   else
-    echo "Skipping: $dirName/mail.yml"
+    echo "Skipping: $dirName/main.yml"
   fi
 done
 
