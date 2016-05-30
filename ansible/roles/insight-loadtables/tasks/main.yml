@@ -10,6 +10,7 @@
   with_items:
     - ""
     - /processing
+    - /uploads
 
 
 - include: "database-setup.yml"
@@ -18,14 +19,14 @@
 
 - include: "install-reporting.yml"
 
-- name: Run initial loadtables to generate tables in GP
-  become_user: insight
-  shell: "{{ insight_talend_location }}/load_tables.sh"
-  when: false
+#- name: Run initial loadtables to generate tables in GP
+  #become_user: insight
+  #shell: "{{ insight_talend_location }}/load_tables.sh"
+  #when: false
 
-- name: Run the creation SQL
-  debug: msg=""
-  when: false
+#- name: Run the creation SQL
+  #debug: msg=""
+  #when: false
 
 
 
