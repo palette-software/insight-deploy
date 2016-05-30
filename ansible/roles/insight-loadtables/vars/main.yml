@@ -1,17 +1,32 @@
 ---
 insight_talend_location: /opt/palette-insight-talend
+insight_reporting_location: /opt/palette-insight-reporting
 greenplum_install_path: /usr/local/greenplum-db
 talend_log_path: /var/log/palette-insight-talend
 
+# names  of the database & schema to use
 insight_database_name: palette
 insight_schema_name: palette
 
+# The gpfdist port to use
 gpfdist_port: 18010
 
+# The ETL user for talend tasks
 palette_etl_user: palette_etl_user
 palette_etl_user_pass: palette123
 
 reporting_resource_queue_name: reporting
+
+ext_errors_table_name: ext_error_table
+
+
+# The error message we expect to see if we run full_install.sql and the version
+# table already exists
+version_table_exists_error_msg: 'ERROR:  relation "db_version_meta" already exists'
+loadtables_no_external_tables_error_msg: 'org.postgresql.util.PSQLException: ERROR: relation "hist_tasks" already exists'
+
+reporting_full_install_file: "{{ insight_reporting_location }}/full-install/full_install.sql"
+reporting_tmp_install_file: /tmp/palette-insight-reporting--fullinstall.sql
 
 #Users in priority order (top highest):
 

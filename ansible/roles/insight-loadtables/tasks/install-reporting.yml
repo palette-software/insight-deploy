@@ -1,15 +1,22 @@
 ---
-- name: Install Insight-reporting to /opt/palette-insight-reporting
+- name: Install Insight-reporting to {{ insight_reporting_location }}
   yum: name=palette-insight-reporting state=latest update_cache=yes
 
 - name: Run initial loadtables to generate tables in GP
   become_user: insight
   shell: "{{ insight_talend_location }}/load_tables.sh"
+  register: initial_loadtables
+  failed_when: initial_loadtables|failed or '{{ loadtables_no_external_tables_error_msg }}' in initial_loadtables.stderr
+
+  #ignore_errors: true
+  #when: false
+
+# after the loadtables run is successful
 
 - name: Create the sql script for creating and dropping dummy_to_create_ext_error_table
   template: src=create_external_dummy_table.sql dest=/tmp/create_external_dummy_table.sql owner=gpadmin group=gpadmin
 
-- name: Create and drop the dummy_to_create_ext_error_table using the script
+- name: Create and drop a dummy external table to create the errors table ext_error_table
   shell: >
     source {{ greenplum_install_path }}/greenplum_path.sh &&
     {{greenplum_install_path}}/bin/psql
@@ -17,4 +24,28 @@
     -f /tmp/create_external_dummy_table.sql
   become: yes
   become_user: gpadmin
+
+# ==================== FULL DATAMODEL ========================
+
+- name: Create a copy of full_install.sql to {{ reporting_tmp_install_file }}
+  copy: remote_src=yes src={{ reporting_full_install_file }} dest={{ reporting_tmp_install_file }} owner=gpadmin group=gpadmin mode="u=rw"
+
+- name: "Replace '#schema_name#' with {{ insight_schema_name }} in {{ reporting_tmp_install_file }}"
+  replace: dest={{ reporting_tmp_install_file }} regexp='#schema_name#' replace={{ insight_schema_name }}
+
+
+- name: Install the full datamodel using full_install.sql
+  shell: >
+    source {{ greenplum_install_path }}/greenplum_path.sh &&
+    {{greenplum_install_path}}/bin/psql
+    -d {{ insight_database_name }}
+    -f {{ reporting_tmp_install_file }}
+  args:
+    chdir: "{{ insight_reporting_location }}/full-install"
+  register: reporting_full_install
+  become: yes
+  become_user: gpadmin
+  ignore_errors: yes
+  failed_when: "reporting_full_install.rc != 0 and ('{{ version_table_exists_error_msg }}' not in reporting_full_install.stderr)"
+  changed_when: "reporting_full_install.rc == 0"
 
