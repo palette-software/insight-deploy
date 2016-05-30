@@ -2,16 +2,42 @@
 - name: Install Insight-reporting to {{ insight_reporting_location }}
   yum: name=palette-insight-reporting state=latest update_cache=yes
 
+
+# ==================== INITIAL METADATA ====================
+
+- name: Check if there is any metadata file present in the uploaded folder
+  shell: >
+    find /data/insight-server/uploads/{{ cluster_name }}/uploads | grep metadata
+  register: metadata_already_present
+  # grep: Normally the exit status is 0 if a line is selected, 1 if no lines were selected, and 2 if an error occurred.
+  failed_when: metadata_already_present.rc == 2
+  # we mark the task as changed if there is alrady a metadatga file here
+  changed_when: metadata_already_present.rc == 1
+
+- name: Create initial metadata directory
+  file: dest=/data/insight-server/uploads/{{ cluster_name }}/uploads/_install state=directory owner=insight group=insight mode=755
+  when: metadata_already_present|changed
+
+
+- name: Copy initial metadata for the current tableau version for the initial loadtables
+  copy:
+    src: "roles/insight-loadtables/files/tableau-metadata/{{ tableau_version }}.csv.gz"
+    dest: "/data/insight-server/uploads/{{ cluster_name }}/uploads/_install/metadata-install.csv.gz"
+    owner: insight
+    group: insight
+    mode: 0644
+  when: metadata_already_present|changed
+
+# ==================== INITIAL LOADTABLES ====================
+
 - name: Run initial loadtables to generate tables in GP
   become_user: insight
   shell: "{{ insight_talend_location }}/load_tables.sh"
   register: initial_loadtables
   failed_when: initial_loadtables|failed or '{{ loadtables_no_external_tables_error_msg }}' in initial_loadtables.stderr
 
-  #ignore_errors: true
-  #when: false
 
-# after the loadtables run is successful
+# ==================== EXT ERROR TABLE  ====================
 
 - name: Create the sql script for creating and dropping dummy_to_create_ext_error_table
   template: src=create_external_dummy_table.sql dest=/tmp/create_external_dummy_table.sql owner=gpadmin group=gpadmin
