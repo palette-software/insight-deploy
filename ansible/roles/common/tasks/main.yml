@@ -14,6 +14,7 @@
 
 - include: "epel.yml"
 - include: "ius.yml"
+- include: "insight-user.yml"
 
 # Set up the hostnames
 #

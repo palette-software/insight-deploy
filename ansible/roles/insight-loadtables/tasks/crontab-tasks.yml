@@ -19,5 +19,5 @@
   cron: user=insight name="Palette Insight Load Tables" job="{{ insight_talend_location }}/load_tables.sh"
 
 - name: Add reporting to crontab (every five minutes)
-  cron: user=insight name="Palette Insight Load Tables" minute="5-55/5" job="{{ insight_talend_location }}/load_tables.sh"
+  cron: user=insight name="Palette Insight Reporting" minute="5-55/5" job="{{ insight_talend_location }}/run_reporting.sh"
 
