@@ -19,4 +19,7 @@ insight_nginx_version: 1.0.0
 
 supervisor_version: 3.2.3
 
+# The default timezone for servers that is used unless the inventory
+# specifies a different timezone
+server_timezone: "America/Los_Angeles"
 
