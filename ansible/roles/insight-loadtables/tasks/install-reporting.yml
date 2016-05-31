@@ -32,9 +32,12 @@
 
 - name: Run initial loadtables to generate tables in GP
   become_user: insight
-  shell: "{{ insight_talend_location }}/load_tables_nolock.sh"
+  shell: "{{ insight_talend_location }}/load_tables.sh"
   register: initial_loadtables
   failed_when: initial_loadtables|failed or '{{ loadtables_no_external_tables_error_msg }}' in initial_loadtables.stderr
+  # As this task may time out, do this here
+  async: 1200 # 20 minutes max runtime allowed
+  poll: 10
 
 
 # ==================== EXT ERROR TABLE  ====================

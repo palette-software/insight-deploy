@@ -1,0 +1,4 @@
+---
+- name: Create / adjust the insight users
+  user: name=insight comment="Palette Insight User" group=insight state=present shell=/bin/bash home=/home/insight
+
