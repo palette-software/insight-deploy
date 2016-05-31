@@ -10,9 +10,15 @@
 
 - name: enable dynamic ca configuration on CentOS / RedHat 6
   shell: update-ca-trust force-enable
+  when: ansible_os_family == "RedHat"
 
 - include: "epel.yml"
 - include: "ius.yml"
+
+# Set up the hostnames
+#
+- name: 'Set up the hostnames. NOTE: You have to use FQDNs in your inventory or assign the >>hostname_fqdn<< for each server.'
+  include: "hostname.yml"
 
 - name: Install SELinux bindings for ansible
   yum: name={{ item }} state=present
