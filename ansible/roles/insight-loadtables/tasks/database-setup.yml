@@ -106,7 +106,7 @@
     source {{ greenplum_install_path }}/greenplum_path.sh &&
     {{greenplum_install_path}}/bin/psql
     -d {{ insight_database_name }}
-    -c "{{ item }}"
+    -c "{{ gp_readony_alter_cmd }}"
   become: yes
   become_user: gpadmin
   with_items:
@@ -114,8 +114,15 @@
     - alter user readonly set random_page_cost=20;
     - alter user readonly set optimizer=on;
     - alter role palette_etl_user  CREATEEXTTABLE;
+  loop_control:
+    loop_var: gp_readony_alter_cmd
 
 
+- name: Reload greenplum configuration
+  shell: >
+    source /home/gpadmin/.bashrc &&
+    {{greenplum_install_path}}/bin/gpstop -u
+  become_user: gpadmin
 
 
 

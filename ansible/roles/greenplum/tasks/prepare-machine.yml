@@ -12,13 +12,15 @@
   yum: name=python-paramiko,python-pip,net-tools,python-devel
 
 - name: install PIP packages needed to run GPDB
-  pip: name={{ item }}
+  pip: name={{ gpdb_pip_pkg }}
   with_items:
     - psi
     - lockfile
+  loop_control:
+    loop_var: gpdb_pip_pkg
 
 - name: Setup sysctl for GreenPlum
-  sysctl: name={{ item.name }} value={{ item.value }} state=present sysctl_set=yes
+  sysctl: name={{ sysctl_flag.name }} value={{ sysctl_flag.value }} state=present sysctl_set=yes
   with_items:
     - { name: "kernel.shmmax", value: 500000000 }
     - { name: "kernel.shmmni", value: 4096 }
@@ -41,18 +43,26 @@
     - { name: "net.core.wmem_max", value: 2097152 }
     - { name: "vm.overcommit_memory", value: 2 }
     - { name: "vm.overcommit_ratio", value: 95 }
+  loop_control:
+    loop_var: sysctl_flag
+
 
 - name: Reload sysctl
   command: /sbin/sysctl -p
 
 - name: Set disk device to have a read-ahead (blockdev) of 16384 for all mounted devices
-  command: /sbin/blockdev --setra 16384 {{ item.device }}
+  command: /sbin/blockdev --setra 16384 {{ blockdev_flag.device }}
   with_items: "{{ ansible_mounts }}"
+  loop_control:
+    loop_var: blockdev_flag
+
 
 - name: Add GreenPlum-required boot flags to the kernel (elevator=deadline transparent_hugepage=never)
-  grubconf: flag={{ item.name }} value={{ item.value }}
+  grubconf: flag={{ gp_boot_flag.name }} value={{ gp_boot_flag.value }}
   with_items:
     - { name: elevator, value: deadline }
     - { name: transparent_hugepage, value: never }
+  loop_control:
+    loop_var: gp_boot_flag
 
 # FIXME: add a stable reboot here
