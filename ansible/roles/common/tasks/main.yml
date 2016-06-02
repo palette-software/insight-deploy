@@ -1,6 +1,8 @@
 ---
 - name: update packages
   yum: name=* state=latest
+  async: 3600 # 60 minutes max runtime allowed
+  poll: 10
 
 - name: install ca package on rhel systems
   yum:
