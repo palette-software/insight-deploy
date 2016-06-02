@@ -38,6 +38,7 @@
   # As this task may time out, do this here
   async: 1200 # 20 minutes max runtime allowed
   poll: 10
+  notify: Restart splunk
 
 
 # ==================== EXT ERROR TABLE  ====================
@@ -56,25 +57,39 @@
 
 # ==================== FULL DATAMODEL ========================
 
-- name: Create a copy of full_install.sql to {{ reporting_tmp_install_file }}
-  copy: remote_src=yes src={{ reporting_full_install_file }} dest={{ reporting_tmp_install_file }} owner=gpadmin group=gpadmin mode="u=rw"
-
-- name: "Replace '#schema_name#' with {{ insight_schema_name }} in {{ reporting_tmp_install_file }}"
-  replace: dest={{ reporting_tmp_install_file }} regexp='#schema_name#' replace={{ insight_schema_name }}
-
-
-- name: Install the full datamodel using full_install.sql
+- name: Install the datamodel
   shell: >
     source {{ greenplum_install_path }}/greenplum_path.sh &&
-    {{greenplum_install_path}}/bin/psql
-    -d {{ insight_database_name }}
-    -f {{ reporting_tmp_install_file }}
-  args:
-    chdir: "{{ insight_reporting_location }}/full-install"
-  register: reporting_full_install
+    {{ insight_reporting_location }}/insight-datamodel-install.sh
+    {{ insight_datamodel_version }}
+  notify: Restart splunk
+  register: datamodel_install_res
+  changed_when: "datamodel_install_res.rc == 0 and '-------------------- OK --------------------' not in datamodel_install_res"
   become: yes
   become_user: gpadmin
-  ignore_errors: yes
-  failed_when: "reporting_full_install.rc != 0 and ('{{ version_table_exists_error_msg }}' not in reporting_full_install.stderr)"
-  changed_when: "reporting_full_install.rc == 0"
+
+
+
+#- name: Create a copy of full_install.sql to {{ reporting_tmp_install_file }}
+  #copy: remote_src=yes src={{ reporting_full_install_file }} dest={{ reporting_tmp_install_file }} owner=gpadmin group=gpadmin mode="u=rw"
+
+#- name: "Replace '#schema_name#' with {{ insight_schema_name }} in {{ reporting_tmp_install_file }}"
+  #replace: dest={{ reporting_tmp_install_file }} regexp='#schema_name#' replace={{ insight_schema_name }}
+
+
+#- name: Install the full datamodel using full_install.sql
+  #shell: >
+    #source {{ greenplum_install_path }}/greenplum_path.sh &&
+    #{{greenplum_install_path}}/bin/psql
+    #-d {{ insight_database_name }}
+    #-f {{ reporting_tmp_install_file }}
+  #args:
+    #chdir: "{{ insight_reporting_location }}/full-install"
+  #register: reporting_full_install
+  #become: yes
+  #become_user: gpadmin
+  #ignore_errors: yes
+  #failed_when: "reporting_full_install.rc != 0 and ('{{ version_table_exists_error_msg }}' not in reporting_full_install.stderr)"
+  #changed_when: "reporting_full_install.rc == 0"
+  #notify: Restart splunk
 
