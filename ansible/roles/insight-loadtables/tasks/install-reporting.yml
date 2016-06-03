@@ -51,6 +51,7 @@
     source {{ greenplum_install_path }}/greenplum_path.sh &&
     {{greenplum_install_path}}/bin/psql
     -d {{ insight_database_name }}
+    -U palette_etl_user
     -f /tmp/create_external_dummy_table.sql
   become: yes
   become_user: gpadmin
