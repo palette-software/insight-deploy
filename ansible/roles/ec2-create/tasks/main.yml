@@ -1,29 +1,28 @@
 ---
-- name: Create security group
+- name: 'Create security group name: "{{ project_name }}_security_group" description: "{{ project_name }} security group" region: "{{ aws_region }}"'
   ec2_group:
       name: "{{ project_name }}_security_group"
       description: "{{ project_name }} security group"
       region: "{{ aws_region }}"
+      vpc_id: "{{ vpc.id }}"
       rules:
-          - proto: tcp
-            type: ssh
-            from_port: 22
-            to_port: 22
-            cidr_ip: 0.0.0.0/0
-          #- proto: tcp
-            #type: http
-            #from_port: 80
-            #to_port: 80
-            #cidr_ip: 0.0.0.0/0
-          #- proto: tcp
-            #type: https
-            #from_port: 443
-            #to_port: 443
-            #cidr_ip: 0.0.0.0/0
+        - proto: tcp
+          from_port: 22
+          to_port: 22
+          cidr_ip: 0.0.0.0/0
+        #- proto: tcp
+          #type: http
+          #from_port: 80
+          #to_port: 80
+          #cidr_ip: 0.0.0.0/0
+        #- proto: tcp
+          #type: https
+          #from_port: 443
+          #to_port: 443
+          #cidr_ip: 0.0.0.0/0
       rules_egress:
-          - proto: all
-            type: all
-            cidr_ip: 0.0.0.0/0
+        - proto: all
+          cidr_ip: 0.0.0.0/0
   register: basic_firewall
 
 - name: Create an EC2 key
@@ -33,7 +32,7 @@
   register: ec2_key
 
 - name: save private key
-  copy: content="{{ ec2_key.private_key }}" dest="./aws-{{ project-name }}-{{ env }}-private.pem" mode=0600
+  copy: content="{{ ec2_key.key.private_key }}" dest="./aws-{{ project_name }}-{{ env }}-private.pem" mode=0600
   when: ec2_key.changed
 
 - name: Create an EC2 instance
@@ -42,6 +41,8 @@
       region: "{{ aws_region }}"
       group_id: "{{ basic_firewall.group_id }}"
       instance_type: "{{ instance_type }}"
+      vpc_subnet_id: "{{ vpc.subnet_id }}"
+      #vpc_id: "{{ vpc_id }}"
       image: "{{ ami }}"
       wait: yes
       instance_tags:

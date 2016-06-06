@@ -76,3 +76,43 @@ This playbook:
 - allows local connections for all users
 - allows remote connections via MD5
 - tunes the database
+
+
+## Creating EC2 instances
+
+The role `ec2-create` and `ec2-users` can handle the creation of new
+machines for insight-servers (or other purposes).
+
+The variables used by these playbooks:
+
+```yaml
+# The Amazon VPC to use (the roles do not create it)
+vpc:
+  # The VPC ID:
+  # vpc-88e89aec (10.4.0.0/24) | Palette Insight US East 1 (v2)
+  # vpc-8ba59dee (172.16.0.0/16) | Amazon
+  id: vpc-8ba59dee
+
+  # The subnet ID:
+  # subnet-ad10e787 (172.31.2.0/24) | Redshift US East Subnet
+  # subnet-d33f7ff8 (172.16.2.0/24) | Amazon
+  subnet_id: subnet-d33f7ff8
+
+# The project_name is used to name security groups and keys
+project_name: "insight-ebs-migrate"
+
+# env name, this will be used as an inventory file name
+env: "staging"
+
+# remote user to add keys to
+app_code_user: "{{ uservar }}"
+
+# The AWS region for the instance
+aws_region: us-east-1 # AWS region, where instance will be created
+
+# AWS instance type
+instance_type: t2.micro 
+
+# Centos 6.5 w. updates / HVM / US-East
+ami: ami-1c221e76
+```

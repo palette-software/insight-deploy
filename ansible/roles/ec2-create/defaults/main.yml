@@ -1,4 +1,12 @@
 ---
+vpc:
+  # vpc-88e89aec (10.4.0.0/24) | Palette Insight US East 1 (v2)
+  # vpc-8ba59dee (172.16.0.0/16) | Amazon
+  id: vpc-8ba59dee
+  # subnet-ad10e787 (172.31.2.0/24) | Redshift US East Subnet
+  # subnet-d33f7ff8 (172.16.2.0/24) | Amazon
+  subnet_id: subnet-d33f7ff8
+
 project_name: "insight-ebs-migrate"
 # env name, this will be used as an inventory file name
 env: "staging"
