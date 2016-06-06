@@ -5,6 +5,7 @@
   gather_facts: False
   remote_user: ubuntu
   vars:
+    vpc_id: vpc-88e89aec
     project_name: "insight-ebs-migrate"
     # env name, this will be used as an inventory file name
     env: "staging"
