@@ -37,6 +37,12 @@
 
 - name: Create an EC2 instance
   ec2:
+      instance_tags:
+        Name: "{{ project_name}}-{{ env }}"
+        env: "{{ env }}"
+        role: "ebs-migrator"
+        Ansible: true
+
       key_name: "{{ project_name }}-{{ env }}-key"
       region: "{{ aws_region }}"
       group_id: "{{ basic_firewall.group_id }}"
@@ -45,10 +51,15 @@
       #vpc_id: "{{ vpc_id }}"
       image: "{{ ami }}"
       wait: yes
-      instance_tags:
-          env: "{{ env }}"
       count_tag: env
       exact_count: 1
+
+      volumes:
+        - device_name: /dev/sda1
+          volume_type: gp2
+          volume_size: 10
+          delete_on_termination: true
+
   register: ec2
 
 
