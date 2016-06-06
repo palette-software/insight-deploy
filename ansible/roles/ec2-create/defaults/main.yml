@@ -1,0 +1,11 @@
+---
+project_name: "insight-ebs-migrate"
+# env name, this will be used as an inventory file name
+env: "staging"
+# remote user
+app_code_user: "{{ uservar }}"
+
+aws_region: us-east-1 # AWS region, where instance will be created
+instance_type: t2.micro  # AWS instance type
+# Centos 6.5 w. updates / HVM / US-East
+ami: ami-1c221e76
