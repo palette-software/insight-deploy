@@ -110,10 +110,11 @@
   become: yes
   become_user: gpadmin
   with_items:
+    - alter role palette with SUPERUSER;
     - ALTER ROLE readonly RESOURCE QUEUE reporting;
     - alter user readonly set random_page_cost=20;
     - alter user readonly set optimizer=on;
-    - alter role palette_etl_user  CREATEEXTTABLE;
+    - alter role palette_etl_user with CREATEEXTTABLE;
   loop_control:
     loop_var: gp_readony_alter_cmd
 
