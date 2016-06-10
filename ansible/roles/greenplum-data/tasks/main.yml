@@ -39,6 +39,10 @@
     - "local all all trust"
     - "host all all 0.0.0.0/0 md5"
 
+
+- name: Enable SSL for Greenplum
+  include: "greenplum-ssl.yml"
+
 - name: Tune Greenplum before the restart
   include: "tuning.yml"
 
