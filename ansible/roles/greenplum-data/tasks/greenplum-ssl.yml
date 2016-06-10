@@ -3,13 +3,13 @@
   yum: name=palette-insight-certs state=present
 
 - name: Symlink the Insight-certificate to the greenplum master data directory
-  file: src=/etc/palette-insight-certs/cert.crt dest={{ greenplum_datadir }}/master/gpsne-1/server.crt state=link owner={{ greenplum_user }} group=gpadmin mode="u=rw,g=r,o="
+  copy: src=/etc/palette-insight-certs/cert.crt dest={{ greenplum_datadir }}/master/gpsne-1/server.crt remote_src=true owner={{ greenplum_user }} group={{ greenplum_user }} mode="u=rw,g=r,o="
 
-- name: Symlink the Insight-certificate key to the greenplum master data directory
-  file: src=/etc/palette-insight-certs/cert.key dest={{ greenplum_datadir }}/master/gpsne-1/server.key state=link owner={{ greenplum_user }} group=gpadmin mode=0600
+- name: Copy the Insight-certificate key to the greenplum master data directory (with proper permissions)0
+  copy: src=/etc/palette-insight-certs/cert.key dest={{ greenplum_datadir }}/master/gpsne-1/server.key remote_src=true owner={{ greenplum_user }} group={{ greenplum_user }} mode=0600
 
-- name: Enable SSL support
-  shell: bash -lc "gpconfig -c ssl -v on"
+- name: Enable SSL support for connecting to master (but not between segments)
+  shell: bash -lc "gpconfig -c ssl -v off -m on"
   become: yes
   become_user: "{{ greenplum_user }}"
   notify:

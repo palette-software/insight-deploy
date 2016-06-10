@@ -1,58 +1,23 @@
 ---
-- name: Install required packages for greenplum
-  yum: name=ed state=present
 
-- name: Create /data/primary
-  file: path={{ item }} state=directory owner={{ greenplum_user }} group=root mode="u=rwx,g=rx,o=rx"
-  with_items:
-    - /data/primary
-    - /data/master
+- name: Check if GreenPlum data directory exists
+  stat: path={{ greenplum_datadir }}/master/gpsne-1
+  register: gp_master_dir
 
-- name: Create gphosts file
-  template: src=gphosts dest={{ greenplum_hosts_file }} owner=root group=root mode="u=rw,g=r,o=r"
+- name: Run GpInitSystem if the GreenPlum data directory does not exist
+  include: "gpinitsystem.yml"
+  when: not gp_master_dir.stat.exists
 
-- name: Create gpinitsystem_singlenode file for {{ ansible_processor_vcpus }} segments
-  template: src=gpinitsystem_singlenode dest=/home/{{ greenplum_user }}/gpinitsystem_singlenode owner={{ greenplum_user }} group={{ greenplum_user }}
-
-- name: Add MASTER_DATA_DIRECTORY to .bashrc
-  lineinfile: dest=/home/{{ greenplum_user }}/.bashrc regexp="^export MASTER_DATA_DIRECTORY=" line="export MASTER_DATA_DIRECTORY={{ greenplum_datadir }}/master/gpsne-1"
-
-- name: Exchange ssh keys using gpssh-exkeys
-  shell: bash -lc "gpssh-exkeys -f {{ greenplum_hosts_file }}"
-  become: yes
-  become_user: "{{ greenplum_user }}"
-
-- name: Run GpInitSystem
-  shell: bash -lc "gpinitsystem -a -h {{ greenplum_hosts_file }} -c /home/{{ greenplum_user }}/gpinitsystem_singlenode"
-  register: gpinitsystem_output
-  become: yes
-  become_user: "{{ greenplum_user }}"
-  ignore_errors: yes
-
-- name: Fail if GpInitSystem failed
-  fail: msg="GPInitSystem failiure"
-  when: "'Greenplum Database instance successfully created' not in gpinitsystem_output.stdout"
+- name: Enable SSL for Greenplum
+  include: "greenplum-ssl.yml"
 
 - name: Allow remote logins
   lineinfile: dest={{ greenplum_datadir }}/master/gpsne-1/pg_hba.conf line={{ item }}
   with_items:
     - "local all all trust"
     - "host all all 0.0.0.0/0 md5"
-
-
-- name: Enable SSL for Greenplum
-  include: "greenplum-ssl.yml"
+    # allow ssl connection
+    - "hostssl all all 0.0.0.0/0 md5"
 
 - name: Tune Greenplum before the restart
   include: "tuning.yml"
-
-#- notify: Reload greenplum config
-#- name: Reload config
-  #shell: bash -lc "pg_ctl -D {{ greenplum_datadir }}/master/gpsne-1 reload"
-  #become: yes
-  #become_user: "{{ greenplum_user }}"
-
-#
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# gpconfig -c statement_mem -v 1000MB
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
