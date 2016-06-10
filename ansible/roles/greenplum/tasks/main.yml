@@ -13,3 +13,16 @@
   with_items:
     - prepare-machine.yml
     - install.yml
+
+- name: Check if Greenplum is started
+  become: yes
+  become_user: gpadmin
+  shell: bash -lc "gpstate -b"
+  ignore_errors: yes
+  register: gpstate
+
+- name: Start Greenplum if it is not started
+  when: "'could not connect to server' in gpstate.stdout"  
+  become: yes
+  become_user: gpadmin
+  shell: bash -lc "echo Y | gpstart"
