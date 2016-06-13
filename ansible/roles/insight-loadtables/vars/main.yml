@@ -1,8 +1,4 @@
 ---
-# VERSIONS
-#
-insight_datamodel_version: v1.1.17
-
 
 
 insight_talend_location: /opt/palette-insight-talend

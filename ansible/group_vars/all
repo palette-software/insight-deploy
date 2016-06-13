@@ -1,7 +1,7 @@
 ---
 # Variables listed here are applicable to all host groups
 
-uservar: ec2-user
+uservar: centos
 #Define Core Update Level
 # true  = Development, minor, and major updates are all enabled
 # false = Development, minor, and major updates are all disabled
@@ -22,4 +22,3 @@ supervisor_version: 3.2.3
 # The default timezone for servers that is used unless the inventory
 # specifies a different timezone
 server_timezone: "America/Los_Angeles"
-

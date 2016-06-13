@@ -15,3 +15,4 @@ greenplum_other_mem: 0
 
 greenplum_config:
   statement_mem: 1000MB
+
