@@ -37,7 +37,6 @@ insight_stop() {
 
   # Kill the reporting job if its running
   echo "+ Killing Palette Insight Reporting"
-  which pkill
   # As pkill return 0 only if one or more processes matched the criteria,
   # we have to do this ugly workaround
   pkill -f "flock -n ${REPORTING_LOCKFILE}" || true
