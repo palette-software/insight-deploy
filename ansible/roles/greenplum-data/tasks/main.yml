@@ -30,3 +30,6 @@
 - name: Updating chkconfig for GreenPlum
   shell: chkconfig --add greenplum
 
+- name: Greenplim service start & enable on restart
+  service: name=greenplum state=started enabled=yes
+
