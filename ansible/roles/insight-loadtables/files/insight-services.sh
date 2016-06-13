@@ -151,7 +151,7 @@ case $COMMAND in
 
     *)
         # Print help
-        echo "Usage: $0 {start|stop|restart|reload|status}" 1>&2
+        echo "Usage: $0 {start|stop|restore_crontab|backup_crontab|clean_crontab}" 1>&2
         exit 1
         ;;
 esac
