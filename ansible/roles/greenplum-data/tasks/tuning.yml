@@ -5,13 +5,13 @@
 - name: Setting Greenplum virtual memory protection limit
   shell: bash -lc "gpconfig -c gp_vmem_protect_limit -v {{ gp_vmem_protect_limit_amt.stdout_lines[0] }}"
   become: yes
-  become_user: gpadmin
+  become_user: "{{ greenplum_user }}"
 
 
 - name: Tune Greenplum using gpconfig
   shell: bash -lc "gpconfig -c {{ item.key }} -v {{ item.value }}"
   become: yes
-  become_user: gpadmin
+  become_user: "{{ greenplum_user }}"
   with_dict: "{{ greenplum_config }}"
   notify:
     - Reload greenplum config
