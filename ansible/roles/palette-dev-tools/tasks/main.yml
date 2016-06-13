@@ -5,4 +5,7 @@
 - name: Install OpenJDK (1.8)
   yum: name=java-1.8.0-openjdk state=present
 
+- name: Set the PAGER to less
+  copy: src=pager.sh dest=/etc/profile.d/pager.sh owner=root group=root mode=0644
+
 - include: 'vim.yml'
