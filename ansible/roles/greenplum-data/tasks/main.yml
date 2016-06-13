@@ -21,3 +21,12 @@
 
 - name: Tune Greenplum before the restart
   include: "tuning.yml"
+
+# ==================== INIT SCRIPT ====================
+
+- name: Copy the init.d script for GreenPlum
+  template: src=init.d/greenplum dest=/etc/init.d/greenplum owner=root group=root mode=0755
+
+- name: Updating chkconfig for GreenPlum
+  shell: chkconfig --add greenplum
+
