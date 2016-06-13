@@ -19,3 +19,6 @@
 - include: "install-reporting.yml"
 - include: "crontab-tasks.yml"
 
+- name: Create the insight-services shell script to gracefully stop and start greenplum and related components
+  copy: src=insight-services.sh dest=/usr/local/bin owner=root group=root mode=0755
+
