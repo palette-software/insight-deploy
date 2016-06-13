@@ -15,7 +15,7 @@
 
 # Who to run the postmaster as, usually "postgres".  (NOT "root")
 GPUSER=gpadmin
-GPLOG="$GPHOME/serverlog.log"
+GPLOG="/var/log/greenplum/service.log"
 export MASTER_DATA_DIRECTORY={{ greenplum_master_datadir }}
 
 set -e
