@@ -1,0 +1,4 @@
+.vagrant
+build
+*.rpm
+packer_cache
