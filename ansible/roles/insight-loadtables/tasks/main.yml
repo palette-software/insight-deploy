@@ -19,6 +19,9 @@
 - include: "install-reporting.yml"
 - include: "crontab-tasks.yml"
 
+- name: Create the temporary crontab / status storage directory for insight-services
+  file: path={{ insight_services_data_dir }} state=directory mode=0755 owner=root group=root
+
 - name: Create the insight-services shell script to gracefully stop and start greenplum and related components
-  copy: src=insight-services.sh dest=/usr/local/bin/insight-services owner=root group=root mode=0755
+  template: src=insight-services.sh dest=/usr/local/bin/insight-services owner=root group=root mode=0755
 
