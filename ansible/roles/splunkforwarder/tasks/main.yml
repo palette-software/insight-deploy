@@ -10,3 +10,12 @@
   template: src=inputs.conf dest=/opt/splunkforwarder/etc/system/local/inputs.conf owner=splunk group=splunk
   notify:
     - Restart splunk
+
+- name: Check if splunk already has in initscript installed
+  stat: path=/etc/init.d/splunk
+  register: splunk_init_script
+
+- name: Setup splunk to run on system start
+  command: /opt/splunkforwarder/bin/splunk enable boot-start -user splunk
+  when: not splunk_init_script.stat.exists
+
