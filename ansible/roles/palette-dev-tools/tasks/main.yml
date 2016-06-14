@@ -9,3 +9,13 @@
   copy: src=pager.sh dest=/etc/profile.d/pager.sh owner=root group=root mode=0644
 
 - include: 'vim.yml'
+
+- name: Install motd fancifier packages
+  yum: name=fortune-mod,banner,boxes,cowsay
+
+- name: Disable SSH MOTD
+  lineinfile: dest=/etc/ssh/sshd_config line='PrintMotd no'
+
+- name: Add dynamic MOTD to /etc/profile.d/dmotd.sh
+  copy: src=dmotd.sh dest=/etc/profile.d/dmotd.sh owner=root group=root mode=0755
+
