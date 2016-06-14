@@ -10,19 +10,35 @@ REPORTING_LOCKFILE=/tmp/PI_Reporting_prod.flock
 CRON_USER=insight
 TEMP_CRON_FILE={{ insight_services_data_dir }}/${CRON_USER}.cron.tmp
 
+
+
 # ==================== STATUS ====================
 
+header() {
+  echo -e "\n\n=====[ $@ ]====="
+}
 
 # Returns the status of the services from the status file
 # or the default status (STARTED) if the status file
 # has not yet been created
 insight_status() {
-  # If the status file exists read the status from that
-  if [[ -f ${STATUS_FILE} ]]; then
-    cat ${STATUS_FILE}
-  else
-    echo UNKNOWN
+  if [[ ! -f ${TEMP_CRON_FILE} ]]; then
+    header "Temporary backup crontab ${TEMP_CRON_FILE} exists"
   fi
+
+  header "Greenplum status"
+  service greenplum status
+
+  header "Insight-GPFDist status"
+  supervisorctl status insight-gpfdist
+
+  header "Current crontab used for $CRON_USER"
+  crontab -l -u $CRON_USER
+
+
+  header "Currently running talend jobs"
+  pgrep -fl "flock /opt/palette-insight-talend" | egrep -o 'PI_[^\.]*' | xargs -n 1 echo " + "
+
 }
 
 
@@ -31,7 +47,7 @@ insight_status() {
 
 insight_stop() {
 
-  echo "Stopping Palette Insight Services"
+  header "Stopping Palette Insight Services"
 
   insight_backup_crontab
 
@@ -51,14 +67,14 @@ insight_stop() {
 
   # Now we can stop greenplum
   service greenplum stop
-
-  # Save the fact that the services are stopped
-  echo "STOPPED" > ${STATUS_FILE}
 }
 
 # ==================== START ====================
 
 insight_start() {
+
+  header "Starting Palette Insight Services"
+
   # Start up greenplum
   service greenplum start
 
@@ -73,9 +89,6 @@ insight_start() {
   else
      insight_restore_crontab
   fi
-
-  # Save the fact that the services are started
-  echo "STARTED" > ${STATUS_FILE}
 }
 
 
@@ -149,6 +162,6 @@ case $COMMAND in
         ;;
 esac
 
-echo "OK"
+header "OK"
 exit 0
 
