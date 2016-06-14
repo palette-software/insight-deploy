@@ -1,20 +1,4 @@
 #!/bin/bash
-
-# Installation:
-#
-# 1.   vim /etc/ssh/sshd_config 
-#      PrintMotd no
-#
-# 2.   vim /etc/pam.d/login
-#      # session optional pam_motd.so
-#
-# 3.   vim /etc/profile
-#      /usr/local/bin/dynmotd # Place at the bottom
-#
-# 4.   Then of course drop this file at
-#      /usr/local/bin/dynmotd
-# 
-
 USER=`whoami`
 HOSTNAME=`uname -n`
 IP=`hostname -i`
@@ -29,9 +13,9 @@ PSA=`ps -Afl | wc -l`
 HOUR=$(date +"%H")
 if [ $HOUR -lt 12  -a $HOUR -ge 0 ]
 then    TIME="morning"
-elif [ $HOUR -lt 17 -a $HOUR -ge 12 ] 
+elif [ $HOUR -lt 17 -a $HOUR -ge 12 ]
 then    TIME="afternoon"
-else 
+else
     TIME="evening"
 fi
 
