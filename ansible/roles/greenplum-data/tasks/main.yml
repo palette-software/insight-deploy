@@ -8,6 +8,9 @@
   include: "gpinitsystem.yml"
   when: not gp_master_dir.stat.exists
 
+- name: Greenplum as init.d service
+  include: "greenplum-initscript.yml"
+
 - name: Enable SSL for Greenplum
   include: "greenplum-ssl.yml"
 
@@ -21,18 +24,4 @@
 
 - name: Tune Greenplum before the restart
   include: "tuning.yml"
-
-# ==================== INIT SCRIPT ====================
-
-- name: Copy the init.d script for GreenPlum
-  template: src=init.d/greenplum dest=/etc/init.d/greenplum owner=root group=root mode=0755
-
-- name: Updating chkconfig for GreenPlum
-  shell: chkconfig --add greenplum
-
-- name: Create /var/log directory for greenplum logs
-  file: path=/var/log/greenplum owner=root group=gpadmin state=directory mode="u=rwx,g=rwx,o="
-
-- name: Greenplum service start & enable on restart
-  service: name=greenplum state=started enabled=yes
 
