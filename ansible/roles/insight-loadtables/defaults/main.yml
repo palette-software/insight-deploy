@@ -3,3 +3,5 @@
 #
 insight_datamodel_version: v1.1.17
 
+insight_services_data_dir: /etc/insight-services
+

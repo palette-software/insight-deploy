@@ -2,14 +2,15 @@
 
 set -e
 
-STATUS_FILE=/tmp/insight-status
+STATUS_FILE={{ insight_services_data_dir }}/insight-status
 
 LOADTABLES_LOCKFILE=/tmp/PI_ImportTables_prod.flock
 REPORTING_LOCKFILE=/tmp/PI_Reporting_prod.flock
 
 CRON_USER=insight
-TEMP_CRON_FILE=/tmp/${CRON_USER}.cron.tmp
+TEMP_CRON_FILE={{ insight_services_data_dir }}/${CRON_USER}.cron.tmp
 
+# ==================== STATUS ====================
 
 
 # Returns the status of the services from the status file
@@ -24,7 +25,6 @@ insight_status() {
   fi
 }
 
-STATUS=`insight_status`
 
 
 # ==================== STOP ====================
@@ -76,12 +76,6 @@ insight_start() {
 
   # Save the fact that the services are started
   echo "STARTED" > ${STATUS_FILE}
-}
-
-# ==================== STATUS ====================
-
-insight_status() {
-    echo $STATUS
 }
 
 
