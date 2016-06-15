@@ -1,39 +1,28 @@
 #!/bin/bash
 
+#!/bin/bash
+
 set -e
 
 # Check arg count
 if [ "$#" -ne 2 ]; then
-  echo "Usage: $0 <VCPU_COUNT> <OTHER_MEMORY_MB>"
-  exit 1
+    echo "Usage: $0 <VCPU_COUNT> <OTHER_MEMORY_MB>"
+    exit 1
 fi
 
-FREE_OUTPUT=`free -g`
 RAM=`free -m | perl -l -ne '/Mem:\s+(\d+)/ && print $1'`
 SWAP=`free -m | perl -l -ne '/Swap:\s+(\d+)/ && print $1'`
+
 NumOfSegs=$1
 GPDBOtherMem=$2
 
-python -c "
-import math
-import sys
+# The swap factor (X). X=1.5 uses some swap, but should allow
+# larger allocations for queries
 
-ram = ${RAM}
-swap = ${SWAP}
+# How much of the swap space are we willing to add to the GP
+# vmem. 0.5 allows half of the swap space
+SWAP_FACTOR=0.5
 
 
-usermem = (ram + swap - ((7.5 * 1024) + (ram * 0.05)))
-kernelmem = (0.026 * (usermem / 1.7))
+echo `perl -e  "print(int((($SWAP_FACTOR * $SWAP)  + ($RAM - $GPDBOtherMem)) / $NumOfSegs))"`
 
-OvercommitRatio = math.floor((((ram - kernelmem) / ram) * 100) / 5) * 5
-SuggestedVmem = round( math.ceil(((((usermem - ${GPDBOtherMem}) / 1.7 ) / ${NumOfSegs}))))
-
-gp_vmem_protect_limit = int( ((math.floor((SuggestedVmem + 50) / 100) * 100) or SuggestedVmem) )
-print gp_vmem_protect_limit
-
-if gp_vmem_protect_limit < 0:
-  print 'Not enough memory on the system'
-  sys.exit(1)
-else:
-  print gp_vmem_protect_limit
-"
