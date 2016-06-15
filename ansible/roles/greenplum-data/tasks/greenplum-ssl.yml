@@ -8,10 +8,22 @@
 - name: Copy the Insight-certificate key to the greenplum master data directory (with proper permissions)0
   copy: src=/etc/palette-insight-certs/cert.key dest={{ greenplum_datadir }}/master/gpsne-1/server.key remote_src=true owner={{ greenplum_user }} group={{ greenplum_user }} mode=0600
 
+- name: Check if Greenplum is SSL-enabled
+  shell: bash -lc "gpconfig -s ssl"
+  register: gpconfig_ssl
+  become: yes
+  become_user: "{{ greenplum_user }}"
+  changed_when: false
+
 - name: Enable SSL support for connecting to master (but not between segments)
   shell: bash -lc "gpconfig -c ssl -v off -m on"
   become: yes
   become_user: "{{ greenplum_user }}"
-  notify:
-    - Reload greenplum config
+  when: "'Master  value: off' in gpconfig_ssl.stdout"
+
+
+- name: Restart GreenPlum if SSL config requires it
+  service: name=greenplum state=restarted enabled=yes
+  when: "'Master  value: off' in gpconfig_ssl.stdout"
+
 
