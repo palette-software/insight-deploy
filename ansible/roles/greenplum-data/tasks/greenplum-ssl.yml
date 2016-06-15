@@ -19,11 +19,11 @@
   shell: bash -lc "gpconfig -c ssl -v off -m on"
   become: yes
   become_user: "{{ greenplum_user }}"
-  when: "'Master  value: on' in gpconfig_ssl.stdout"
+  when: "'Master  value: off' not in gpconfig_ssl.stdout"
 
 
 - name: Restart GreenPlum if SSL config requires it
   service: name=greenplum state=restarted enabled=yes
-  when: "'Master  value: on' in gpconfig_ssl.stdout"
+  when: "'Master  value: off' not in gpconfig_ssl.stdout"
 
 
