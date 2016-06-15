@@ -16,9 +16,6 @@ SWAP=`free -m | perl -l -ne '/Swap:\s+(\d+)/ && print $1'`
 NumOfSegs=$1
 GPDBOtherMem=$2
 
-# The swap factor (X). X=1.5 uses some swap, but should allow
-# larger allocations for queries
-
 # How much of the swap space are we willing to add to the GP
 # vmem. 0.5 allows half of the swap space
 SWAP_FACTOR=0.5
