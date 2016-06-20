@@ -1,0 +1,42 @@
+---
+
+
+- name: check if there is a swap partition existing
+  shell: 'swapon -s | grep -E "^/"'
+  register: have_swap
+  # Changed when there is no swap
+  changed_when: have_swap.rc == 1
+  failed_when: false
+
+- debug: msg={{ have_swap }}
+  when: have_swap|changed
+
+- debug: msg={{ have_swap }}
+  when: not have_swap|changed
+
+
+#- name: format swap filesystem
+  #filesystem: fstype=linux-swap dev={{ insight_swap_volume_dev }}
+  #when: have_swap|changed
+
+- name: Create the swap partition label
+  shell: 'parted {{ insight_swap_volume_dev }} --script -- mklabel gpt'
+  when: have_swap|changed
+
+- name: Create the swap partition
+  shell: 'parted {{ insight_swap_volume_dev }} --script -- mkpartfs primary linux-swap 0 -1'
+  when: have_swap|changed
+
+- name: Create the swap using mkswap
+  shell: 'mkswap {{ insight_swap_volume_dev }}'
+  when: have_swap|changed
+
+- name: Enable the swap using swapon
+  shell: 'swapon {{ insight_swap_volume_dev }}'
+  when: have_swap|changed
+
+- name: Add the swap to /etc/fstab
+  lineinfile: dest=/etc/fstab line="{{ insight_swap_volume_dev }}   swap    swap    defaults    0   0" state=present
+
+- name: Setup swappiness to {{ swappiness }} via sysctl
+  sysctl: name=vm.swappiness value={{ swappiness }} state=present sysctl_set=yes
