@@ -1,23 +1,11 @@
 ---
 
-
 - name: check if there is a swap partition existing
   shell: 'swapon -s | grep -E "^/"'
   register: have_swap
   # Changed when there is no swap
   changed_when: have_swap.rc == 1
   failed_when: false
-
-- debug: msg={{ have_swap }}
-  when: have_swap|changed
-
-- debug: msg={{ have_swap }}
-  when: not have_swap|changed
-
-
-#- name: format swap filesystem
-  #filesystem: fstype=linux-swap dev={{ insight_swap_volume_dev }}
-  #when: have_swap|changed
 
 - name: Create the swap partition label
   shell: 'parted {{ insight_swap_volume_dev }} --script -- mklabel gpt'
