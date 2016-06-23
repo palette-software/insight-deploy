@@ -1,4 +1,6 @@
 ---
+- name: Install parted
+  yum: name=parted state=present
 
 - name: Check if we have the swap device enabled
   include: "install-swap.yml"
