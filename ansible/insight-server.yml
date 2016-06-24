@@ -1,5 +1,5 @@
 ---
-- name: Install / Upgrade Palette Insight-server
+- name: Provision / update a Palette Insight Server machine
   hosts: insight-server
   remote_user: "{{ uservar }}"
   become: yes
@@ -8,11 +8,14 @@
   roles:
     - common
     - xfs-init
+    - tmpfs
     - palette-dev-tools
     - nginx
     - supervisor
     - splunkforwarder
     - golang
     - greenplum
+    - greenplum-data
     - insight-server
     - insight-loadtables
+
