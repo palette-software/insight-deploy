@@ -1,0 +1,38 @@
+# Usage:
+#
+# ansible-playbook  --extra-vars "target=<HOSTNAME>" fix-greenplum-hostname.yml
+#
+# Example:
+#
+# ansible-playbook  --extra-vars "target=dev-insight.palette-software.net" fix-greenplum-hostname.yml
+---
+- name: Provision / update a Palette Insight Server machine
+  hosts: "{{ target }}"
+  remote_user: "{{ uservar }}"
+  become: yes
+  become_user: root
+
+  vars:
+    hostname_fqdn: "{{ inventory_hostname }}"
+    hostname_name: "{{ hostname_fqdn.split('.').0 }}"
+
+
+  tasks:
+    - name: Stop GP
+      service: name=greenplum state=stopped
+
+    - name: Start GP in maintenance mode
+      shell: 'source /home/gpadmin/.bash_profile && gpstart -a -U maintenance'
+      become_user: gpadmin
+
+    - name: Update hostname
+      shell: "source /home/gpadmin/.bash_profile && PGOPTIONS='-c gp_maintenance_conn=true' psql -d palette -c \"UPDATE gp_segment_configuration SET hostname='{{ hostname_name }}';\""
+      become_user: gpadmin
+
+    - name: Restart greenplum normally
+      shell: 'source /home/gpadmin/.bash_profile && gpstop -a'
+      become_user: gpadmin
+
+    - name: Start GP
+      service: name=greenplum state=started
+
