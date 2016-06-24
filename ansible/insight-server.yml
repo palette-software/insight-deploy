@@ -1,6 +1,6 @@
 ---
 - name: Install / Upgrade Palette Insight-server
-  hosts: "{{ channel }}"
+  hosts: "{{ channel | default('insight-server') }}"
   remote_user: "{{ uservar }}"
   become: yes
   become_user: root
