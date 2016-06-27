@@ -1,0 +1,7 @@
+# The API key for datadog. This is the palette API key (at least for the trial)
+datadog_api_key: 07b744c0d7d38ac783d175c3c5958b02
+
+
+
+datadog_pg_role_password: 'palette-datadog-123'
+datadog_config_dir: /etc/dd-agent
