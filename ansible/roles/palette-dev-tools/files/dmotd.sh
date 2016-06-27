@@ -1,46 +1,47 @@
 #!/bin/bash
-USER=`whoami`
-HOSTNAME=`uname -n`
-IP=`hostname -i`
-ROOT=`df -Ph | grep "/dev/xvda" | awk '{print $4}' | tr -d '\n'`
-DATA_SPACE=`df -Ph | grep "/dev/xvdb" | awk '{print $4}' | tr -d '\n'`
+if [[ -n $SSH_CONNECTION ]] ; then
+  USER=`whoami`
+  HOSTNAME=`uname -n`
+  IP=`hostname -i`
+  ROOT=`df -Ph | grep "/dev/xvda" | awk '{print $4}' | tr -d '\n'`
+  DATA_SPACE=`df -Ph | grep "/dev/xvdb" | awk '{print $4}' | tr -d '\n'`
 
-MEMORY=`free -m | grep "Mem" | awk '{print $2,"-",$3,"-",$4}'`
-SWAP=`free -m | grep "Swap" | awk '{print $2,"-",$3,"-",$4}'`
-PSA=`ps -Afl | wc -l`
+  MEMORY=`free -m | grep "Mem" | awk '{print $2,"-",$3,"-",$4}'`
+  SWAP=`free -m | grep "Swap" | awk '{print $2,"-",$3,"-",$4}'`
+  PSA=`ps -Afl | wc -l`
 
-# time of day
-HOUR=$(date +"%H")
-if [ $HOUR -lt 12  -a $HOUR -ge 0 ]
-then    TIME="morning"
-elif [ $HOUR -lt 17 -a $HOUR -ge 12 ]
-then    TIME="afternoon"
-else
-    TIME="evening"
-fi
+  # time of day
+  HOUR=$(date +"%H")
+  if [ $HOUR -lt 12  -a $HOUR -ge 0 ]
+  then    TIME="morning"
+  elif [ $HOUR -lt 17 -a $HOUR -ge 12 ]
+  then    TIME="afternoon"
+  else
+      TIME="evening"
+  fi
 
-#System uptime
-uptime=`cat /proc/uptime | cut -f1 -d.`
-upDays=$((uptime/60/60/24))
-upHours=$((uptime/60/60%24))
-upMins=$((uptime/60%60))
-upSecs=$((uptime%60))
+  #System uptime
+  uptime=`cat /proc/uptime | cut -f1 -d.`
+  upDays=$((uptime/60/60/24))
+  upHours=$((uptime/60/60%24))
+  upMins=$((uptime/60%60))
+  upSecs=$((uptime%60))
 
-#System load
-LOAD1=`cat /proc/loadavg | awk {'print $1'}`
-LOAD5=`cat /proc/loadavg | awk {'print $2'}`
-LOAD15=`cat /proc/loadavg | awk {'print $3'}`
+  #System load
+  LOAD1=`cat /proc/loadavg | awk {'print $1'}`
+  LOAD5=`cat /proc/loadavg | awk {'print $2'}`
+  LOAD15=`cat /proc/loadavg | awk {'print $3'}`
 
-echo ""
-echo -e "\e[7m--- GOOD $TIME $USER ----\e[0m"
-echo ""
-MESSAGE=`/usr/bin/fortune | /usr/bin/cowsay`
-echo -e " $MESSAGE"
+  echo ""
+  echo -e "\e[7m--- GOOD $TIME $USER ----\e[0m"
+  echo ""
+  MESSAGE=`/usr/bin/fortune | /usr/bin/cowsay`
+  echo -e " $MESSAGE"
 
-COLOR_COLUMN="\e[1m-"
-COLOR_VALUE="\e[31m"
-RESET_COLORS="\e[0m"
-echo -e "
+  COLOR_COLUMN="\e[1m-"
+  COLOR_VALUE="\e[31m"
+  RESET_COLORS="\e[0m"
+  echo -e "
 ===========================================================================
  $COLOR_COLUMN- Hostname$RESET_COLORS............: $COLOR_VALUE $HOSTNAME $RESET_COLORS
  $COLOR_COLUMN- IP Address$RESET_COLORS..........: $COLOR_VALUE $IP $RESET_COLORS
@@ -56,5 +57,5 @@ echo -e "
  $COLOR_COLUMN- Disk space ROOT$RESET_COLORS.....: $COLOR_VALUE $ROOT remaining $RESET_COLORS
  $COLOR_COLUMN- Disk space HOME$RESET_COLORS.....: $COLOR_VALUE $DATA_SPACE remaining $RESET_COLORS
 ===========================================================================
-"
-
+  "
+fi
