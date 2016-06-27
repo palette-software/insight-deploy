@@ -1,0 +1,3 @@
+---
+# Make the swap volume path here, so defaults and group vars override it properly (?)
+insight_swap_volume_dev: '/dev/{{ insight_swap_volume }}'

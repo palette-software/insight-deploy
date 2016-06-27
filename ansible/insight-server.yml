@@ -8,11 +8,14 @@
   roles:
     - common
     - xfs-init
+    - tmpfs
     - palette-dev-tools
     - nginx
     - supervisor
     - splunkforwarder
     - golang
     - greenplum
+    - greenplum-data
     - insight-server
     - insight-loadtables
+
