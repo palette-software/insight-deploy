@@ -3,7 +3,7 @@
   hosts: insight-server
   remote_user: centos
   become: yes
-  become_user: centos
+  become_user: insight
 
   tasks:
     - name: Create temp directory for github-release-downloader
@@ -25,23 +25,32 @@
         chdir: /tmp/dl-github-release/linux_amd64
       no_log: True
 
-    - name: Create directory for insight-tester which contains the dbcheck
-      file: path='/home/centos/insight-tester/' state=directory mode=0775
-
     - name: Unpack insight-tester to acquire dbcheck (sanity checker)
-      unarchive: src=/tmp/dl-github-release/linux_amd64/linux_amd64.zip dest=/home/centos/insight-tester copy=no
+      unarchive: src=/tmp/dl-github-release/linux_amd64/linux_amd64.zip dest=/tmp/dl-github-release/ copy=no
+
+    - name: Delete previous sanity checker installations
+      file: path='/opt/insight-sanity-check' state=absent
+      become_user: root
+
+    - name: Create directory for sanity checker
+      file: path='/opt/insight-sanity-check' state=directory mode=0775 owner=insight group=insight
+      become_user: root
+
+    - name: Place sanity checker to its final destination (overwrite earlier contents)
+      shell: 'mv -f /tmp/dl-github-release/linux_amd64/sanity_check/* /opt/insight-sanity-check/'
+      become_user: insight
 
     - name: Delete temporary folders
       file: path='/tmp/dl-github-release' state=absent
 
-    - name: Make sanity check configuration inplace
-      template: src=roles/sanity-check/templates/Config.yml dest=/home/centos/insight-tester/linux_amd64/sanity_check/Config.yml owner=centos group=centos
+    - name: Make sanity check configuration
+      template: src=roles/sanity-check/templates/Config.yml dest=/opt/insight-sanity-check/Config.yml owner=insight group=insight
 
     # - name: Execute sanity check once
     #   shell: './dbcheck tests/sanity_checks.yml Config.yml'
     #   args:
-    #     chdir: /home/centos/insight-tester/linux_amd64/sanity_check
+    #     chdir: /opt/insight-sanity-check
 
     - name: Schedule sanity check via cron
-      cron: name="Run DB sanity check" minute="*/5" job="/home/centos/insight-tester/linux_amd64/sanity_check/dbcheck /home/centos/insight-tester/linux_amd64/sanity_check/tests/sanity_checks.yml /home/centos/insight-tester/linux_amd64/sanity_check/Config.yml" user=centos
+      cron: name="Run DB sanity check" minute="*/10" job="/opt/insight-sanity-check/dbcheck /opt/insight-sanity-check/tests/sanity_checks.yml /opt/insight-sanity-check/Config.yml > /dev/null" user=insight
       become_user: root
