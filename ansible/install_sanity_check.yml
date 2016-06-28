@@ -52,5 +52,5 @@
     #     chdir: /opt/insight-sanity-check
 
     - name: Schedule sanity check via cron
-      cron: name="Run DB sanity check" minute="*/10" job="/opt/insight-sanity-check/dbcheck /opt/insight-sanity-check/tests/sanity_checks.yml /opt/insight-sanity-check/Config.yml > /dev/null" user=insight
+      cron: name="Palette Insight Sanity Checks" minute="*/10" job="/opt/insight-sanity-check/dbcheck /opt/insight-sanity-check/tests/sanity_checks.yml /opt/insight-sanity-check/Config.yml > /dev/null" user=insight
       become_user: root
