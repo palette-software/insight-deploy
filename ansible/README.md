@@ -1,4 +1,6 @@
-# Pre-requisites
+# Using ansible to update / deploy machines
+
+## Pre-requisites
 
 ### Machine requirements:
 
@@ -31,14 +33,114 @@ with
 Defaults    !requiretty
 ```
 
-# Running the playbook
+
+## Creating a new insight-server
+
+### 1. Create a new instance in EC2.
+
+For instance parameters, please refer to a Palette engineer.
+
+### 2. Add the volumes:
+
+- A system volume (GP2) of 10 Gb to /sda
+- A data volume (GP2) to /sdb
+- A swap volume (GP2)  of 32 Gb to /sdt
+
+### 3. Add the machine to the inventory
+
+If you are using `deploy-eu.palette-software.net` then add it to
+
+```/etc/ansible/hosts```
+
+following this pattern:
+
+```ini
+[early-adopter]
+bsci-insight.palette-software.net splunk_host=BSCI-PROD
+cluster_name=bsci tableau_version=9.2.4
+netflix-insight.palette-software.net splunk_host=NETFLIX
+cluster_name=netflix-cluster01 tableau_version=9.2.4
+isi-qa-insight.palette-software.net splunk_host=ISI-QA
+cluster_name=isi-qa tableau_version=9.3.0
+isi-insight.palette-software.net splunk_host=ISI-PROD
+cluster_name=ISI-Prod tableau_version=9.1.1
+
+
+[early-adopter:vars]
+channel=early_adopter
+uservar=centos
+insight_datamodel_version=v1.2.3
+
+[dev]
+staging-insight.palette-software.net splunk_host=STAGING
+cluster_name=Staging tableau_version=9.2.4
+dev-insight.palette-software.net splunk_host=DEV cluster_name=Dev
+tableau_version=9.2.4
+
+[dev:vars]
+channel=early_adopter
+uservar=centos
+insight_datamodel_version=v1.2.3
+
+
+[insight-server:children]
+early-adopter
+dev
 
 ```
-ansible-playbook -i aws-hosts2.ini insight-server.yml
+
+Adding a host means adding a line to the proper section (dev, early
+adopter), and specifying the correct values for the deployment:
+
+- ```splunk_host```: the name which will be used in splunk
+
+- ```cluster_name```: the name of the directory inside
+  ```/data/insight-server```. Has to be the same name as the ```id``` of
+the license
+
+- ```tableau_version```: the version of tableau the client is using.
+  Used for getting the initial metadata for LoadTables when the agent
+  has not yet sent any metadata.
+
+- ```hostname_fqdn```: If the hostname you wish to setup differs from
+  the
+  connection address (f.e. there is no DNS record assigned to the
+  machine yet)
+
+
+After you have setup the ansible inventory, you have to add the host to
+the SSH configuration for the key-based-auth.
+
+```bash
+vim ~/.ssh/config
 ```
 
-If you would like to manually provide versions or override other configuration options, you can do it with the ```-a``` command line switch:
+### 4. Testing if the user can connect
 
+After the host is added, you can test if the host can be connected to:
+
+```bash
+ansible all -m ping
 ```
-ansible-playbook -i aws-hosts2.ini insight-server.yml -a "insight_datamodel_version=v1.3.1"
+
+This should return a nice green OK for all hosts. If you see red errors,
+please check your ssh config.
+
+
+### 5. Running the playbook
+
+If everything is set up (please check the ```data_model_version```
+variable), you can run the playbook for all hosts by:
+
+```bash
+ansible-playbook insight-server.yml
 ```
+
+To run the playbook for hosts in a single channel use the ```channel```
+extra variable:
+
+```bash
+ansible-playbook insight-server.yml --extra-vars "channel=dev"
+ansible-playbook insight-server.yml --extra-vars "channel=early-adopter"
+```
+
