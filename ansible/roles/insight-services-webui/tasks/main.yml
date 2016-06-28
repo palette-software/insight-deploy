@@ -1,0 +1,26 @@
+---
+- name: Create the insight-services GUI folder
+  file: path={{ insight_services_webui_dir }} state=directory mode=0755 owner=root group=root
+
+- name: Create the insight-services log folder
+  file: path={{ insight_services_log_dir }} state=directory mode=0755 owner=root group=root
+
+- name: Copy the insight-services contents
+  copy: src={{ file_name.name }} dest={{ insight_services_webui_dir }}/{{ file_name.name }} owner=root group=root mode={{ file_name.mode }}
+  with_items:
+    - {name: server.py, mode: 755}
+    - {name: index.html, mode: 644}
+  loop_control:
+    loop_var: file_name
+
+- name: Create the insight-services-webui service via supervisord
+  template: src=supervisor.conf dest=/etc/supervisord.d/insight-services-webui.ini owner=root group=root mode=664
+
+- name: Update the nginx default site to forward requests to the services webui
+  template: src=nginx.site.conf dest=/etc/nginx/conf.d/default.conf owner=root group=root mode=0644
+
+- name: (Re)start insight-services-webui via supervisord
+  supervisorctl: name=insight-services-webui state=restarted
+
+- name: Reload the nginx configuration so it forwards the http root to the insight-services
+  service: name=nginx state=reloaded

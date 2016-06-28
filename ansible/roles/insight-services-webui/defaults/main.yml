@@ -1,0 +1,3 @@
+
+insight_services_webui_dir: /opt/insight-services-webui
+insight_services_log_dir: /var/log/insight-services
