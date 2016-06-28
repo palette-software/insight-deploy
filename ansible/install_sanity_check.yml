@@ -2,8 +2,8 @@
 - name: Setup sanity checks on database
   hosts: insight-server
   remote_user: centos
-  # become: yes
-  # become_user: root
+  become: yes
+  become_user: centos
 
   tasks:
     - name: Create temp directory for github-release-downloader
@@ -13,26 +13,17 @@
     # - name: Download github release downloader
     #   unarchive: src="https://github.com/palette-software/dl-github-release/releases/download/v1.0.2/linux_amd64.zip" dest=/tmp/dl-github-release copy=no
 
-    - name: Wget github release downloader
+    - name: Download github release downloader
       shell: 'wget -P /tmp/dl-github-release/ https://github.com/palette-software/dl-github-release/releases/download/v1.0.2/linux_amd64.zip'
 
-    - name: Download github release downloader
+    - name: Unpack github release downloader
       unarchive: src="/tmp/dl-github-release/linux_amd64.zip" dest=/tmp/dl-github-release copy=no
 
-    - name: Download sanity check to ...
-      # A 'shell' modul shell command-okat hajt vegre
-      # (viszont nem login shellkent, tehat a .bash_profile
-      # nem toltodik be).
-      # https://docs.ansible.com/ansible/shell_module.html
-      #
-      # A parameter a kiadando parancs
+    - name: Download insight-tester with github release downloader
       shell: '/tmp/dl-github-release/linux_amd64/dl-github-release palette-software insight-tester {{ github_token }}'
       args:
         chdir: /tmp/dl-github-release/linux_amd64
-
-      # # ha mas userkent kellene ezt futtatni, akkor a
-      # # 'become_user' a baratod
-      # become_user: gpadmin
+      no_log: True
 
     - name: Create directory for insight-tester which contains the dbcheck
       file: path='/home/centos/insight-tester/' state=directory mode=0775
@@ -43,19 +34,14 @@
     - name: Delete temporary folders
       file: path='/tmp/dl-github-release' state=absent
 
-    - name: Execute sanity check once
-      # This will fail because config.yml and test.yml is missing
-      shell: '/home/centos/insight-tester/linux_amd64/dbcheck'
+    - name: Make sanity check configuration inplace
+      template: src=roles/sanity-check/templates/Config.yml dest=/home/centos/insight-tester/linux_amd64/sanity_check/Config.yml owner=centos group=centos
 
-    # # A file module fileokat es konyvtarakat hoz letre
-    # # https://docs.ansible.com/ansible/file_module.html
-    # - name: Create the log directory for db sanity check
-    #   file: path=/var/log/insight-sanity-check state=directory mode=0775 owner=root group=gpadmin
+    # - name: Execute sanity check once
+    #   shell: './dbcheck tests/sanity_checks.yml Config.yml'
+    #   args:
+    #     chdir: /home/centos/insight-tester/linux_amd64/sanity_check
 
-
-    # # A cron modullal cron jobokat schedule-ozhetsz
-    # # https://docs.ansible.com/ansible/cron_module.html
-    # - name: Schedule sanity check via cron
-    #   # A {{ splunk_host }} behelyettesiti a parancs-ba a 'splunk_host' valtozo erteket
-    #   # (ami gepenkent eltero lehet)
-    #   cron: name="Run DB sanity check" minute="0" hour="5,2" job="/usr/local/bin/db-sanity-check --splunk-host={{ splunk_host }} > /var/log/insight-sanity-check/insight-sanity-check.log" user=gpadmin
+    - name: Schedule sanity check via cron
+      cron: name="Run DB sanity check" minute="*/5" job="/home/centos/insight-tester/linux_amd64/sanity_check/dbcheck /home/centos/insight-tester/linux_amd64/sanity_check/tests/sanity_checks.yml /home/centos/insight-tester/linux_amd64/sanity_check/Config.yml" user=centos
+      become_user: root

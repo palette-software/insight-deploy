@@ -1,0 +1,4 @@
+---
+
+- name: Make sanity check configuration
+  template: src=Config.yml dest=/home/centos/insight-tester/linux_amd64/sanity_check/Config.yml owner=centos group=centos
