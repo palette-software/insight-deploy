@@ -1,6 +1,6 @@
 ---
-- name: Provision / update a Palette Insight Server machine
-  hosts: insight-server
+- name: Install / Upgrade Palette Insight-server
+  hosts: "{{ channel | default('insight-server') }}"
   remote_user: "{{ uservar }}"
   become: yes
   become_user: root
