@@ -17,8 +17,8 @@ core_update_level: true
 distro_kind: centos
 
 
-
-splunk_tcp_target: "splunk-insight.palette-software.net:9997"
+splunk_server_address: splunk-insight.palette-software.net
+splunk_tcp_target: "{{ splunk_server_address }}:9997"
 
 insight_nginx_version: 1.0.0
 
