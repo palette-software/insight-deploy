@@ -1,4 +1,53 @@
 ---
+- name: Create temp directory for github-release-downloader
+  file: path=/tmp/dl-github-release state=directory mode=0775 owner=insight group=insight
+
+# Unfortunately download fails this way...
+# - name: Download github release downloader
+#   unarchive: src="https://github.com/palette-software/dl-github-release/releases/download/v1.0.2/linux_amd64.zip" dest=/tmp/dl-github-release copy=no
+
+- name: Download github release downloader
+  shell: 'wget -P /tmp/dl-github-release/ https://github.com/palette-software/dl-github-release/releases/download/v1.0.2/linux_amd64.zip'
+  become_user: insight
+
+- name: Unpack github release downloader
+  unarchive: src="/tmp/dl-github-release/linux_amd64.zip" dest=/tmp/dl-github-release copy=no
+  become_user: insight
+
+- name: Download insight-tester with github release downloader
+  shell: '/tmp/dl-github-release/linux_amd64/dl-github-release palette-software insight-tester {{ github_token }}'
+  become_user: insight
+  args:
+    chdir: /tmp/dl-github-release/linux_amd64
+  no_log: True
+
+- name: Unpack insight-tester to acquire dbcheck (sanity checker)
+  unarchive: src=/tmp/dl-github-release/linux_amd64/linux_amd64.zip dest=/tmp/dl-github-release/ copy=no
+  become_user: insight
+
+- name: Delete previous sanity checker installations
+  file: path='/opt/insight-sanity-check' state=absent
+  become_user: root
+
+- name: Create directory for sanity checker
+  file: path='/opt/insight-sanity-check' state=directory mode=0775 owner=insight group=insight
+  become_user: root
+
+- name: Place sanity checker to its final destination (overwrite earlier contents)
+  shell: 'mv -f /tmp/dl-github-release/linux_amd64/sanity_check/* /opt/insight-sanity-check/'
+  become_user: insight
+
+- name: Delete temporary folders
+  file: path='/tmp/dl-github-release' state=absent
 
 - name: Make sanity check configuration
-  template: src=Config.yml dest=/home/centos/insight-tester/linux_amd64/sanity_check/Config.yml owner=centos group=centos
+  template: src=Config.yml dest=/opt/insight-sanity-check/Config.yml owner=insight group=insight
+
+# - name: Execute sanity check once
+#   shell: './dbcheck tests/sanity_checks.yml Config.yml'
+#   args:
+#     chdir: /opt/insight-sanity-check
+
+- name: Schedule sanity check via cron
+  cron: name="Palette Insight Sanity Checks" minute="*/10" job="/opt/insight-sanity-check/dbcheck /opt/insight-sanity-check/tests/sanity_checks.yml /opt/insight-sanity-check/Config.yml > /dev/null" user=insight
+  become_user: root
