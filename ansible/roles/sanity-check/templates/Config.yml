@@ -1,5 +1,5 @@
 DbConnector:
-    Host: localhost
+    Host: 127.0.0.1
     Port: 5432
     User: palette_etl_user
     Password: {{ gp_palette_password }}
