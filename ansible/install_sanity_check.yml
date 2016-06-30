@@ -11,7 +11,7 @@
 
   tasks:
     - name: Create temp directory for github-release-downloader
-      file: path={{ sanity_check_temporary_download_dir }} state=directory mode=0775
+      file: path={{ sanity_check_temporary_download_dir }} state=directory mode=0775 owner=insight group=insight
 
     - name: Download github release downloader
       unarchive: src="https://github.com/palette-software/dl-github-release/releases/download/v1.0.2/linux_amd64.zip" dest={{ sanity_check_temporary_download_dir }} copy=no
