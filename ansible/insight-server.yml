@@ -19,4 +19,4 @@
     - insight-server
     - insight-loadtables
     - insight-services-webui
-
+    - sanity-check
