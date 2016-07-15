@@ -3,7 +3,7 @@
 # ==================== CRONTAB VACUUM ====================
 
 - name: Create log directory for VACUUM script
-  file: path=/var/log/vacuum state=directory mode=0755 owner=root group=gpadmin
+  file: path=/var/log/vacuum state=directory mode=0775 owner=root group=gpadmin
 
 - name: Create VACUUM crontab shell script
   template: src=vacuum.sh dest=/home/gpadmin/vacuum.sh owner=gpadmin group=gpadmin mode="u=rwx,g=rx,o=rx"
