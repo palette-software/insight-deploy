@@ -20,14 +20,14 @@
 
 # Set up the hostnames
 #
-- name: 'Set up the hostnames. NOTE: You have to use FQDNs in your inventory or assign the >>hostname_fqdn<< for each server.'
-  include: "hostname.yml"
-
 - name: Install SELinux bindings for ansible
   yum: name={{ item }} state=present
   with_items:
     - libsemanage-python
     - libselinux-python
+
+- name: 'Set up the hostnames. NOTE: You have to use FQDNs in your inventory or assign the >>hostname_fqdn<< for each server.'
+  include: "hostname.yml"
 
 - name: Copy the Palette repository definition
   copy: src=palette.repo dest=/etc/yum.repos.d/

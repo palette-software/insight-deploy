@@ -8,6 +8,10 @@
 - Greenplum requires at least 8 Gb of memory
 - the OS of choice is CentOS 6 for now (use the Centos 6 with Updates
   HVM amazon image as a starting point)
+- Root SSH access must be enabled (```PermitRootLogin yes``` in ```/etc/sshd.conf```) for
+  gpssh-exkeys to work
+- No ```AllowUsers``` directive in sshd_config (it might hinder the GP
+  SSH key exchange)
 
 
 ### Disk requirements:
