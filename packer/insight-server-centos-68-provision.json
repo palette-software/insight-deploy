@@ -1,0 +1,32 @@
+{
+  "builders": [{
+    "type": "qemu",
+    "name": "insight-server-centos-68-provision",
+    "iso_url": "output-insight-server-centos-68-base/insight-server-centos-68-base",
+    "iso_checksum_type": "md5",
+    "iso_checksum": "6abae2616ef66cb5071f241c582aaa85",
+    "disk_image": true,
+    "disk_size": 81920,
+    "headless": false,
+    "boot_wait": "1s",
+    "ssh_username": "root",
+    "ssh_password": "exclaimedtowntrackcheese",
+    "ssh_port": 22,
+    "ssh_wait_timeout": "1000s",
+    "shutdown_command": "/sbin/halt -h -p",
+    "vm_name": "insight-server-centos-68-provision"
+  }],
+  "provisioners": [{
+    "type": "ansible",
+    "user": "root",
+    "playbook_file": "ansible/insight-server-packer.yml",
+    "groups": ["insight-server-packer"],
+    "local_port": 33333,
+    "sftp_command": "/usr/libexec/openssh/sftp-server",
+    "extra_arguments": ["-i", "ansible/insight-server-packer.ini", "-v"]
+  }],
+  "post-processors": [{
+    "type": "shell-local",
+    "inline": ["qemu-img convert -O vmdk output-insight-server-centos-68-provision/insight-server-centos-68-provision output-insight-server-centos-68-provision/insight-server-centos-provision.vmdk"]
+  }]
+}

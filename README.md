@@ -113,8 +113,20 @@ app_code_user: "{{ uservar }}"
 aws_region: us-east-1 # AWS region, where instance will be created
 
 # AWS instance type
-instance_type: t2.micro 
+instance_type: t2.micro
 
 # Centos 6.5 w. updates / HVM / US-East
 ami: ami-1c221e76
 ```
+
+
+## Building Insight-Server VM disk image for On-Premise Install
+
+You need packer, ansible, qemu.
+
+```bash
+packer build packer/insight-server-centos-68-base.json
+packer build packer/insight-server-centos-68-provision.json
+```
+
+You get `output-insight-server-centos-68-provision/output-insight-server-68/provision.vmdk` which you can send to OPI clients.
