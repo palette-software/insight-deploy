@@ -56,6 +56,12 @@
       <Table_names name="hist_schedules" type="incremental"/>
       <Table_names name="hist_workbooks" type="incremental"/>
       <Table_names name="historical_events" type="incremental"/>
+      <Table_names name="hist_capabilities" type="incremental"/>
+      <Table_names name="hist_configs" type="incremental"/>
+      <Table_names name="hist_tags" type="incremental"/>
+      <Table_names name="historical_disk_usage" type="incremental"/>
+      <Table_names name="historical_event_types" type="incremental"/>
+      
 
       <!-- Append only tables from the tableau repository -->
       <Table_names name="http_requests" type="incremental"/>
