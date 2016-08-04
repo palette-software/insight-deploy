@@ -1,4 +1,13 @@
 ---
+- name: Add centos group
+  group: name=centos gid=999
+
+- name: Add centos user
+  user: name=centos uid=999 group=centos
+
+- name: Add centos user to sudoers
+  lineinfile: "dest=/etc/sudoers state=present regexp='^centos' line='centos ALL=(ALL) NOPASSWD: ALL'"
+
 - name: update packages
   yum: name=* state=latest
   async: 3600 # 60 minutes max runtime allowed
@@ -25,6 +34,9 @@
   with_items:
     - libsemanage-python
     - libselinux-python
+
+- name: Disable SELinux
+  selinux: state=disabled
 
 - name: 'Set up the hostnames. NOTE: You have to use FQDNs in your inventory or assign the >>hostname_fqdn<< for each server.'
   include: "hostname.yml"
