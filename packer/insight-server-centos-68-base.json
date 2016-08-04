@@ -10,7 +10,7 @@
     ],
     "boot_wait": "1s",
     "disk_size": 41000,
-    "headless": false,
+    "headless": true,
     "http_directory": "packer/insight-server-centos-68-kickstart",
     "ssh_username": "root",
     "ssh_password": "exclaimedtowntrackcheese",

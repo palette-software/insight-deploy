@@ -123,7 +123,11 @@ ami: ami-1c221e76
 ## Building Insight-Server VM disk image for On-Premise Install
 
 You need packer, ansible, qemu.
+```
+nix-shell  # load the environment defined in default.nix, containing the above tools
+```
 
+Run the build:
 ```
 ./build_insight_server_opi_diskimage.sh
 ```
@@ -131,9 +135,12 @@ You need packer, ansible, qemu.
 Result:
 - `output-insight-server-centos-68-provision/output-insight-server-68/provision.vmdk` (8G root + 32G swap)
 - `output-insight-server-centos-68-data/output-insight-server-centos-68-data.vmdk` (1T data)
-which you can send to OPI clients.
+
+Th
+
 
 TODO:
 - start gp on boot
 - add license to image
 - customize image per customer
+
