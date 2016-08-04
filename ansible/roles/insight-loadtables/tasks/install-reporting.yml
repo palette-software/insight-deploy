@@ -58,7 +58,7 @@
 
 # ==================== FULL DATAMODEL ========================
 
-- name: Install the datamodel
+- name: Install the data model
   shell: >
     source {{ greenplum_install_path }}/greenplum_path.sh &&
     {{ insight_reporting_location }}/insight-datamodel-install.sh

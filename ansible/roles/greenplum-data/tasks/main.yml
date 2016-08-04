@@ -21,6 +21,7 @@
     - "host all all 0.0.0.0/0 md5"
     # allow ssl connection
     - "hostssl all all 0.0.0.0/0 md5"
+    - "host all all ::1/128 trust"
 
 - name: Tune Greenplum before the restart
   include: "tuning.yml"
