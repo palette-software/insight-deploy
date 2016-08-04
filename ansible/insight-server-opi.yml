@@ -1,0 +1,16 @@
+---
+- name: Provision Palette Insight-Server VM Image
+  include: insight-server.yml
+  vars:
+    ansible_processor_vcpus: 8
+    ansible_host: 127.0.0.1
+    ansible_port: 33333
+    ansible_ssh_user: root
+    ansible_ssh_pass: exclaimedtowntrackcheese
+    ansible_password: exclaimedtowntrackcheese
+    tableau_version: 9.2.4
+    splunk_host: STAGING-NEXT
+    channel: insight-server
+    uservar: centos
+    insight_datamodel_version: v1.10.10
+    data_mount_dev: /dev/sdb

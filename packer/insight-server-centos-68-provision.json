@@ -2,31 +2,37 @@
   "builders": [{
     "type": "qemu",
     "name": "insight-server-centos-68-provision",
+    "iso_checksum_type": "none",
     "iso_url": "output-insight-server-centos-68-base/insight-server-centos-68-base",
-    "iso_checksum_type": "md5",
-    "iso_checksum": "6abae2616ef66cb5071f241c582aaa85",
     "disk_image": true,
-    "disk_size": 81920,
-    "headless": false,
+    "disk_size": 41000,
+    "headless": true,
     "boot_wait": "1s",
     "ssh_username": "root",
     "ssh_password": "exclaimedtowntrackcheese",
     "ssh_port": 22,
     "ssh_wait_timeout": "1000s",
     "shutdown_command": "/sbin/halt -h -p",
-    "vm_name": "insight-server-centos-68-provision"
+    "vm_name": "insight-server-centos-68-provision",
+    "qemuargs": [
+      ["-m", "4096"],
+      ["-drive", "file=output-insight-server-centos-68-provision/insight-server-centos-68-provision,if=ide,index=0,cache=writeback,discard=ignore"],
+      ["-drive", "file=output-insight-server-centos-68-data/insight-server-centos-68-data,if=ide,index=1,cache=writeback,discard=ignore"]
+    ]
   }],
   "provisioners": [{
     "type": "ansible",
     "user": "root",
-    "playbook_file": "ansible/insight-server-packer.yml",
-    "groups": ["insight-server-packer"],
+    "playbook_file": "ansible/insight-server-opi.yml",
+    "groups": ["insight-server-opi-packer"],
     "local_port": 33333,
     "sftp_command": "/usr/libexec/openssh/sftp-server",
-    "extra_arguments": ["-i", "ansible/insight-server-packer.ini", "-v"]
+    "extra_arguments": ["-i", "ansible/insight-server-opi-packer.ini"]
   }],
   "post-processors": [{
     "type": "shell-local",
-    "inline": ["qemu-img convert -O vmdk output-insight-server-centos-68-provision/insight-server-centos-68-provision output-insight-server-centos-68-provision/insight-server-centos-provision.vmdk"]
+    "inline": [
+      "qemu-img convert -O vmdk output-insight-server-centos-68-provision/insight-server-centos-68-provision output-insight-server-centos-68-provision/insight-server-centos-provision.vmdk",
+      "qemu-img convert -O vmdk output-insight-server-centos-68-data/insight-server-centos-68-data output-insight-server-centos-68-data/insight-server-centos-data.vmdk"]
   }]
 }

@@ -9,7 +9,7 @@
       "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg<enter><wait>"
     ],
     "boot_wait": "1s",
-    "disk_size": 81920,
+    "disk_size": 41000,
     "headless": false,
     "http_directory": "packer/insight-server-centos-68-kickstart",
     "ssh_username": "root",
@@ -21,6 +21,9 @@
   }],
   "post-processors": [{
     "type": "shell-local",
-    "inline": ["qemu-img convert -O vmdk output-insight-server-centos-68-base/insight-server-centos-68-base output-insight-server-centos-68-base/insight-server-centos-68-base.vmdk"]
+    "inline": [
+        "md5sum output-insight-server-centos-68-base/insight-server-centos-68-base > output-insight-server-centos-68-base/insight-server-centos-68-base.md5sum",
+        "qemu-img convert -O vmdk output-insight-server-centos-68-base/insight-server-centos-68-base output-insight-server-centos-68-base/insight-server-centos-68-base.vmdk"
+    ]
   }]
 }

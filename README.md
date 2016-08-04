@@ -124,9 +124,16 @@ ami: ami-1c221e76
 
 You need packer, ansible, qemu.
 
-```bash
-packer build packer/insight-server-centos-68-base.json
-packer build packer/insight-server-centos-68-provision.json
+```
+./build_insight_server_opi_diskimage.sh
 ```
 
-You get `output-insight-server-centos-68-provision/output-insight-server-68/provision.vmdk` which you can send to OPI clients.
+Result:
+- `output-insight-server-centos-68-provision/output-insight-server-68/provision.vmdk` (8G root + 32G swap)
+- `output-insight-server-centos-68-data/output-insight-server-centos-68-data.vmdk` (1T data)
+which you can send to OPI clients.
+
+TODO:
+- start gp on boot
+- add license to image
+- customize image per customer
