@@ -4,7 +4,8 @@
   remote_user: "{{ uservar }}"
   become: yes
   become_user: root
-
+  vars:
+    num_segments: 4
   roles:
     - common
     - xfs-init
