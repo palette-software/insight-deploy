@@ -15,8 +15,8 @@
     - splunkforwarder
     - golang
     - greenplum
+    - insight-server
     - greenplum-data
     - insight-loadtables
-    - insight-server
     - insight-services-webui
     - sanity-check
