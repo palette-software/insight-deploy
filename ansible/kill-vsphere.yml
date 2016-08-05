@@ -1,0 +1,23 @@
+---
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  user: remote
+
+  tasks:
+    - vsphere_guest:
+        validate_certs: false
+        vcenter_hostname: 88.151.101.26
+        username: root
+        password: nemmondommeg
+        guest: opi-ansible-clone
+        state: absent
+        force: yes
+        # vm_extra_config:
+        # vcpu.hotadd: yes
+        # mem.hotadd:  yes
+        # notes: This is a test VM for Ansible provision
+        vm_hw_version: vmx-08
+        esxi:
+          datacenter: ha-datacenter
+          hostname: localhost.localdomain
