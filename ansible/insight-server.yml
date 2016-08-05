@@ -16,7 +16,7 @@
     - golang
     - greenplum
     - greenplum-data
-    - insight-server
     - insight-loadtables
+    - insight-server
     - insight-services-webui
     - sanity-check
