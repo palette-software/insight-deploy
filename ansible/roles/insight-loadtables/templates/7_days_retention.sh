@@ -12,7 +12,7 @@ psql -tc "select
 		from
 			(
 			select
-				'alter table $SCHEMA.' || tablename || ' drop partition \"' || partitionname || '\";' drop_stmt,
+				'alter table ' || schemaname || '.' || tablename || ' drop partition \"' || partitionname || '\";' drop_stmt,
 				row_number() over (partition by tablename order by partitionname desc) as rn
 			from pg_partitions t
 			where
