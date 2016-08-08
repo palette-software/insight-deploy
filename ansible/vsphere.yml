@@ -5,26 +5,27 @@
   user: remote
   # sudo: true
 
-#  vars_prompt:
-#    - name: "vcenter_hostname"
-#      prompt: "Enter vcenter hostname"
-#      private: no
-#      default: "vcsa"
-#    - name: "vcenter_user"
-#      prompt: "Enter vcenter username"
-#      private: no
-#    - name: "vcenter_pass"
-#      prompt: "Enter vcenter password"
-#      private: yes
-#
+  vars_prompt:
+    - name: "vcenter_hostname"
+      prompt: "Enter vcenter hostname"
+      private: no
+      default: "88.151.101.26"
+    - name: "vcenter_user"
+      prompt: "Enter vcenter username"
+      private: no
+      default: "root"
+    - name: "vcenter_pass"
+      prompt: "Enter vcenter password"
+      private: yes
+
   tasks:
     - vsphere_guest:
         validate_certs: false
-        vcenter_hostname: 88.151.101.26
-        username: root
-        password: nemmondommeg
+        vcenter_hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_user }}"
+        password: "{{ vcenter_pass }}"
         guest: opi-ansible
-        state: powered_off
+        state: powered_on
         vm_extra_config:
           vcpu.hotadd: yes
           mem.hotadd:  yes
@@ -51,7 +52,7 @@
             type: vmxnet3
             network: VM Network
             network_type: standard
-            # nic2:
+            n:
             # type: vmxnet3
             # network: dvSwitch Network
             # network_type: dvs
@@ -62,7 +63,7 @@
           scsi: paravirtual
           vm_cdrom:
             type: "iso"
-            iso_path: "datastore1/Install/CentOS-6.8-x86_64-minimal.iso"
+            iso_path: "datastore1/Install/Centos-6-Kickstarter-XFS.iso"
         vm_hw_version: vmx-08
         esxi:
           datacenter: ha-datacenter
