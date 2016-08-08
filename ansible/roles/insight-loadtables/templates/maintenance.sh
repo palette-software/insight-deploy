@@ -22,7 +22,7 @@ echo "End vacuum analyze pg_catalog tables. " + $(date) >> $LOGFILE
 echo "Start vacuum tables by new partitions " + $(date) >> $LOGFILE
 
 psql -tc "select
-				'vacuum ' || p.schemaname || '."' || p.partitiontablename || '";'
+				'vacuum ' || p.schemaname || '.\"' || p.partitiontablename || '\";'
 			from 
 				pg_partitions p
 				left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
@@ -50,7 +50,7 @@ echo "End vacuum tables by new partitions " + $(date) >> $LOGFILE
 echo "Start analyze tables by new partitions " + $(date) >> $LOGFILE
 
 psql -tc "select
-				'analyze ' || p.schemaname || '."' || p.partitiontablename || '";'
+				'analyze ' || p.schemaname || '.\"' || p.partitiontablename || '\";'
 		from 
 			pg_partitions p
 			left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
