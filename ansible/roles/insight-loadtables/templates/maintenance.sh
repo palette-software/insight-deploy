@@ -24,6 +24,7 @@ echo "Start drop indexes " + $(date) >> $LOGFILE
 psql $DBNAME >> $LOGFILE 2>&1 <<EOF
 \set ON_ERROR_STOP on
 set search_path = $SCHEMA;
+begin;
 select drop_child_indexes('$SCHEMA.p_cpu_usage_bootstrap_rpt_parent_vizql_session_idx');
 select drop_child_indexes('$SCHEMA.p_cpu_usage_report_cpu_usage_parent_vizql_session_idx');
 select drop_child_indexes('$SCHEMA.p_serverlogs_p_id_idx');
@@ -35,6 +36,7 @@ drop index p_cpu_usage_report_cpu_usage_parent_vizql_session_idx;
 drop index p_serverlogs_p_id_idx;
 drop index p_serverlogs_parent_vizql_session_idx;
 drop index p_serverlogs_bootstrap_rpt_parent_vizql_session_idx;
+commit;
 
 EOF
 
@@ -116,16 +118,13 @@ psql $DBNAME >> $LOGFILE 2>&1 <<EOF
 \set ON_ERROR_STOP on
 set search_path = $SCHEMA;
 set role palette_palette_updater;
-
+begin;
 CREATE INDEX p_cpu_usage_bootstrap_rpt_parent_vizql_session_idx ON p_cpu_usage_bootstrap_rpt USING btree (cpu_usage_parent_vizql_session);
-
 CREATE INDEX p_cpu_usage_report_cpu_usage_parent_vizql_session_idx ON p_cpu_usage_report USING btree (cpu_usage_parent_vizql_session);
-
 CREATE INDEX p_serverlogs_p_id_idx ON p_serverlogs USING btree (p_id);
-
 CREATE INDEX p_serverlogs_parent_vizql_session_idx ON p_serverlogs USING btree (parent_vizql_session);
-
 CREATE INDEX p_serverlogs_bootstrap_rpt_parent_vizql_session_idx ON p_serverlogs_bootstrap_rpt USING btree (parent_vizql_session);
+commit;
 EOF
 
 echo "End create indexes " + $(date) >> $LOGFILE
