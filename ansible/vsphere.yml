@@ -46,7 +46,7 @@
             size_gb: 32
             type: thin
             datastore: datastore1
-            folder: disks/dis3
+            folder: disks/disk3
         vm_nic:
           nic1:
             type: vmxnet3
