@@ -13,7 +13,7 @@
     - nginx
     - supervisor
     - splunkforwarder
-    - golang
+    # - golang
     - greenplum
     - insight-server
     - greenplum-data
