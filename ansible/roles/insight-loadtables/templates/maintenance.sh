@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/bash -l
 
 DBNAME="palette"
 SCHEMA="palette"
 VCOMMAND="VACUUM ANALYZE"
-LOGFILE="./kgz_maintenance.log"
+LOGFILE="/home/gpadmin/db_maintenance.log"
 
 echo "Start maintenance " + $(date) >> $LOGFILE
 echo "Start vacuum analyze pg_catalog tables. " + $(date) >> $LOGFILE
