@@ -4,8 +4,8 @@ DBNAME="palette"
 SCHEMA="palette"
 LOGFILE="/home/gpadmin/db_maintenance.log"
 
-echo "Start maintenance " + $(date) > $LOGFILE
-echo "Start vacuum analyze pg_catalog tables. " + $(date) >> $LOGFILE
+echo "Start maintenance $(date)" > $LOGFILE
+echo "Start vacuum analyze pg_catalog tables $(date)" >> $LOGFILE
 
 psql -tc "select 'VACUUM ANALYZE ' || b.nspname || '.' || relname || ';'
 from
@@ -16,9 +16,9 @@ where
         b.nspname in ('pg_catalog') and
         a.relkind='r'" $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
 
-echo "End vacuum analyze pg_catalog tables. " + $(date) >> $LOGFILE
+echo "End vacuum analyze pg_catalog tables $(date)" >> $LOGFILE
 
-echo "Start drop indexes " + $(date) >> $LOGFILE
+echo "Start drop indexes $(date)" >> $LOGFILE
 
 psql $DBNAME >> $LOGFILE 2>&1 <<EOF
 \set ON_ERROR_STOP on
@@ -39,9 +39,9 @@ commit;
 
 EOF
 
-echo "End drop indexes " + $(date) >> $LOGFILE
+echo "End drop indexes $(date)" >> $LOGFILE
 
-echo "Start vacuum tables by new partitions " + $(date) >> $LOGFILE
+echo "Start vacuum tables by new partitions $(date)" >> $LOGFILE
 
 psql -tc "select
 				'vacuum ' || p.schemaname || '.\"' || p.partitiontablename || '\";'
@@ -66,10 +66,10 @@ psql -tc "select
 				to_date(p.partitionname, 'yyyymmdd') < now()::date 
 		" $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
 	
-echo "End vacuum tables by new partitions " + $(date) >> $LOGFILE
+echo "End vacuum tables by new partitions $(date)" >> $LOGFILE
 
 
-echo "Start analyze tables by new partitions " + $(date) >> $LOGFILE
+echo "Start analyze tables by new partitions $(date)" >> $LOGFILE
 
 psql -tc "select
 				'analyze ' || p.schemaname || '.\"' || p.partitiontablename || '\";'
@@ -93,10 +93,10 @@ psql -tc "select
 			to_date(p.parentpartitionname, 'yyyymmdd') < now()::date
 		" $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
 	
-echo "End analyze tables by new partitions " + $(date) >> $LOGFILE
+echo "End analyze tables by new partitions $(date)" >> $LOGFILE
 
 
-echo "Start vacuum analyze rest of the tables " + $(date) >> $LOGFILE
+echo "Start vacuum analyze rest of the tables $(date)" >> $LOGFILE
 
 psql $DBNAME >> $LOGFILE 2>&1 <<EOF
 \set ON_ERROR_STOP on
@@ -109,9 +109,9 @@ VACUUM ANALYZE p_serverlogs_bootstrap_rpt;
 
 EOF
 
-echo "End vacuum tables " + $(date) >> $LOGFILE
+echo "End vacuum tables $(date)" >> $LOGFILE
 
-echo "Start create indexes " + $(date) >> $LOGFILE
+echo "Start create indexes $(date)" >> $LOGFILE
 
 psql $DBNAME >> $LOGFILE 2>&1 <<EOF
 \set ON_ERROR_STOP on
@@ -126,7 +126,7 @@ CREATE INDEX p_serverlogs_bootstrap_rpt_parent_vizql_session_idx ON p_serverlogs
 commit;
 EOF
 
-echo "End create indexes " + $(date) >> $LOGFILE
+echo "End create indexes $(date)" >> $LOGFILE
 
-echo "End maintenance " + $(date) >> $LOGFILE
+echo "End maintenance $(date)" >> $LOGFILE
 
