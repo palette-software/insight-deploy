@@ -7,4 +7,12 @@ else
     echo "No data model version specified. Trying to install the latest one."
 fi
 
-source /usr/local/greenplum-db/greenplum_path.sh && echo $PATH
+pushd
+
+cd /tmp
+
+source /usr/local/greenplum-db/greenplum_path.sh &&
+    /opt/palette-insight-reporting/insight-datamodel-install.sh $data_model_version
+
+popd
+

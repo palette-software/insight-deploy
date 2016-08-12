@@ -11,7 +11,11 @@ fi
 sudo yum clean all
 sudo yum install -y palette-insight-reporting
 
-# Find a place which is available both for centos and gpadmin user
-cp -f ./gpadmin-install-data-model.sh /tmp/
+# Figure out the relative path from the current working directory to the path of this script being run
+SCRIPT_PATH="`dirname \"$0\"`"
+
+# Find a place which is available both for centos and gpadmin user. For example /tmp will do.
+cp -f $SCRIPT_PATH/gpadmin-install-data-model.sh /tmp/
+sudo chown gpadmin:gpadmin /tmp/gpadmin-install-data-model.sh
 sudo su -c "/tmp/gpadmin-install-data-model.sh $data_model_version" gpadmin
 rm /tmp/gpadmin-install-data-model.sh
