@@ -10,6 +10,6 @@
 - name: Create DB Maintenance shell script
   template: src=db_maintenance.sh dest=/home/gpadmin/db_maintenance.sh owner=gpadmin group=gpadmin mode="u=rwx,g=rx,o=rx"
   
-- name: Add reporting to crontab (every five minutes)
+- name: Add Load Control to crontab (every five minutes)
   cron: user=insight name="Palette Insight Load Control" minute="*/5" job="/home/insight/loadctrl.sh"
   

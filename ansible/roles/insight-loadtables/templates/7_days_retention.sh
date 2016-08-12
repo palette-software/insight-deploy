@@ -2,7 +2,7 @@
 
 DBNAME="palette"
 SCHEMA="palette"
-LOGFILE="./kgz_7days_ret.log"
+LOGFILE="./retention.log"
 
 
 echo "Start drop old partitions. " + $(date) >> $LOGFILE
