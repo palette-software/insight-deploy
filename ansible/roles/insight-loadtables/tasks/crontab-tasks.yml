@@ -1,26 +1,15 @@
 ---
-
-# ==================== CRONTAB VACUUM ====================
-
-- name: Create log directory for VACUUM script
-  file: path=/var/log/vacuum state=directory mode=0775 owner=root group=gpadmin
-
-- name: Create VACUUM crontab shell script
-  template: src=vacuum.sh dest=/home/gpadmin/vacuum.sh owner=gpadmin group=gpadmin mode="u=rwx,g=rx,o=rx"
-
-- name: Determine the UTC hour for running the vacuum script from the crontab
-  shell: date -d "TZ=\"{{ server_timezone }}\" `date '+%Y-%m-%d 00:30'`" +%k
-  register: vacuum_run_hour
-  changed_when: false
-
-- name: "Add VACUUM script to crontab (run at 00:31 tableau cluster local time)"
-  cron: user=gpadmin name="Palette Insight VACUUM" hour={{ vacuum_run_hour.stdout }} minute=31 job="/home/gpadmin/vacuum.sh"
-
 # ==================== TALEND CRONTAB SCRIPTS ====================
 
 - name: Add talend loadtables to crontab (run every minute)
   cron: user=insight name="Palette Insight Load Tables" job="{{ insight_talend_location }}/load_tables.sh"
 
-- name: Add reporting to crontab (every five minutes)
-  cron: user=insight name="Palette Insight Reporting" minute="5-55/5" job="{{ insight_talend_location }}/run_reporting.sh"
+- name: Create Load Control shell script
+  template: src=loadctrl.sh dest=/home/insight/loadctrl.sh owner=insight group=insight mode="u=rwx,g=rx,o=rx"
 
+- name: Create DB Maintenance shell script
+  template: src=db_maintenance.sh dest=/home/gpadmin/db_maintenance.sh owner=gpadmin group=gpadmin mode="u=rwx,g=rx,o=rx"
+  
+- name: Add reporting to crontab (every five minutes)
+  cron: user=insight name="Palette Insight Load Control" minute="*/5" job="/home/insight/loadctrl.sh"
+  
