@@ -15,6 +15,7 @@ set -e
 
     last_maintenance_ts=$(cat last_maintenance_ts)
     currtime=$(date)
+	#10:30 is 03:30 in USA SF time
     maintenance_after=1030
 
 	#Check if current time has passed the maintenece time and there has been NO maintenance in that day yet.
