@@ -4,7 +4,10 @@
 - name: Add talend loadtables to crontab (run every minute)
   cron: user=insight name="Palette Insight Load Tables" job="{{ insight_talend_location }}/load_tables.sh"
 
-- name: Make sure obsolate Reporting crontab is disabled
+- name: "Make sure obsolate Vacuum crontab is deleted"
+  cron: user=gpadmin name="Palette Insight VACUUM" state=absent job="/home/gpadmin/vacuum.sh"
+
+- name: Make sure obsolate Reporting crontab is deleted
   cron: user=insight name="Palette Insight Reporting" state=absent job="{{ insight_talend_location }}/run_reporting.sh"
 
 - name: Create Load Control shell script
