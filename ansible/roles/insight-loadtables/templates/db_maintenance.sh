@@ -2,13 +2,12 @@
 
 DBNAME="palette"
 SCHEMA="palette"
-VCOMMAND="VACUUM ANALYZE"
 LOGFILE="/home/gpadmin/db_maintenance.log"
 
 echo "Start maintenance " + $(date) > $LOGFILE
 echo "Start vacuum analyze pg_catalog tables. " + $(date) >> $LOGFILE
 
-psql -tc "select '$VCOMMAND ' || b.nspname || '.' || relname || ';'
+psql -tc "select 'VACUUM ANALYZE ' || b.nspname || '.' || relname || ';'
 from
         pg_class a,
         pg_namespace b
