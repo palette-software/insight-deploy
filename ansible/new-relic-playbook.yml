@@ -1,0 +1,9 @@
+---
+- name: Install New Relic Agent
+  hosts: insight-server
+  remote_user: centos
+  become: yes
+  become_user: root
+
+  roles:
+    - new-relic
