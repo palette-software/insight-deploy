@@ -18,6 +18,46 @@ where
 
 echo "End vacuum analyze pg_catalog tables $(date)" >> $LOGFILE
 
+echo "Start set connection limit for readonly to 0 $(date)" >> $LOGFILE
+psql $DBNAME -c "alter role readonly with CONNECTION LIMIT 0" >> $LOGFILE 2>&1
+echo "End set connection limit for readonly to 0 $(date)" >> $LOGFILE
+
+echo "Start terminate readonly connections $(date)" >> $LOGFILE
+
+psql -tc "select 'select pg_terminate_backend(' || procpid || ');'
+from
+        pg_stat_activity
+where
+        datname = '$SCHEMA' and
+        usename = 'readonly'" $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
+
+echo "End terminate readonly connections $(date)" >> $LOGFILE
+
+
+echo "Start drop old partitions. " $(date) >> $LOGFILE
+
+psql -tc "select
+                        drop_stmt
+                from
+                        (
+                        select
+                                'alter table ' || schemaname || '.' || tablename || ' drop partition \"' || partitionname || '\";' drop_stmt,
+                                row_number() over (partition by tablename order by partitionname desc) as rn
+                        from pg_partitions t
+                        where
+                                schemaname = '$SCHEMA' and
+                                tablename in ('threadinfo', 'serverlogs', 'p_threadinfo', 'p_serverlogs', 'p_cpu_usage', 'p_cpu_usage_report') and
+                                partitiontype = 'range' and
+                                partitionname <> '10010101'
+                        ) a
+                where
+                        rn > 15
+                order by 1
+        " $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
+
+echo "End drop old partitions. " + $(date) >> $LOGFILE
+
+
 echo "Start drop indexes $(date)" >> $LOGFILE
 
 psql $DBNAME >> $LOGFILE 2>&1 <<EOF
@@ -44,55 +84,55 @@ echo "End drop indexes $(date)" >> $LOGFILE
 echo "Start vacuum tables by new partitions $(date)" >> $LOGFILE
 
 psql -tc "select
-				'vacuum ' || p.schemaname || '.\"' || p.partitiontablename || '\";'
-			from 
-				pg_partitions p
-				left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
-														 o.objname = p.partitiontablename and
-														 o.actionname = 'VACUUM'
-														 )
-			where 
-				p.tablename in ('p_serverlogs', 
-								'p_cpu_usage', 
-								'p_cpu_usage_report' 
-								/*'p_interactor_session',
-								'p_cpu_usage_agg_report',
-								'p_process_class_agg_report',
-								'p_cpu_usage_bootstrap_rpt',
-								'p_serverlogs_bootstrap_rpt'*/
-								) and	
-				p.parentpartitiontablename is null and
-				o.statime is null and
-				to_date(p.partitionname, 'yyyymmdd') < now()::date 
-		" $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
-	
+                                'vacuum ' || p.schemaname || '.\"' || p.partitiontablename || '\";'
+                        from
+                                pg_partitions p
+                                left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
+                                                                                                                 o.objname = p.partitiontablename and
+                                                                                                                 o.actionname = 'VACUUM'
+                                                                                                                 )
+                        where
+                                p.tablename in ('p_serverlogs',
+                                                                'p_cpu_usage',
+                                                                'p_cpu_usage_report'
+                                                                /*'p_interactor_session',
+                                                                'p_cpu_usage_agg_report',
+                                                                'p_process_class_agg_report',
+                                                                'p_cpu_usage_bootstrap_rpt',
+                                                                'p_serverlogs_bootstrap_rpt'*/
+                                                                ) and
+                                p.parentpartitiontablename is null and
+                                o.statime is null and
+                                to_date(p.partitionname, 'yyyymmdd') < now()::date
+                " $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
+
 echo "End vacuum tables by new partitions $(date)" >> $LOGFILE
 
 
 echo "Start analyze tables by new partitions $(date)" >> $LOGFILE
 
 psql -tc "select
-				'analyze ' || p.schemaname || '.\"' || p.partitiontablename || '\";'
-		from 
-			pg_partitions p
-			left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
-													 o.objname = p.partitiontablename and
-													 o.actionname = 'ANALYZE'
-													 )
-		where 
-			p.tablename in ('p_serverlogs', 
-							'p_cpu_usage', 
-							'p_cpu_usage_report'
-							/*'p_interactor_session',
-							'p_cpu_usage_agg_report',
-							'p_process_class_agg_report',
-							'p_cpu_usage_bootstrap_rpt',
-							'p_serverlogs_bootstrap_rpt'*/) and	
-			p.parentpartitiontablename is not null and
-			o.statime is null and 
-			to_date(p.parentpartitionname, 'yyyymmdd') < now()::date
-		" $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
-	
+                                'analyze ' || p.schemaname || '.\"' || p.partitiontablename || '\";'
+                from
+                        pg_partitions p
+                        left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
+                                                                                                         o.objname = p.partitiontablename and
+                                                                                                         o.actionname = 'ANALYZE'
+                                                                                                         )
+                where
+                        p.tablename in ('p_serverlogs',
+                                                        'p_cpu_usage',
+                                                        'p_cpu_usage_report'
+                                                        /*'p_interactor_session',
+                                                        'p_cpu_usage_agg_report',
+                                                        'p_process_class_agg_report',
+                                                        'p_cpu_usage_bootstrap_rpt',
+                                                        'p_serverlogs_bootstrap_rpt'*/) and
+                        p.parentpartitiontablename is not null and
+                        o.statime is null and
+                        to_date(p.parentpartitionname, 'yyyymmdd') < now()::date
+                " $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
+
 echo "End analyze tables by new partitions $(date)" >> $LOGFILE
 
 
@@ -128,5 +168,9 @@ EOF
 
 echo "End create indexes $(date)" >> $LOGFILE
 
-echo "End maintenance $(date)" >> $LOGFILE
+echo "Start set connection limit for readonly to -1 $(date)" >> $LOGFILE
+psql $DBNAME -c "alter role readonly with CONNECTION LIMIT -1" >> $LOGFILE 2>&1
+echo "End set connection limit for readonly to -1 $(date)" >> $LOGFILE
 
+
+echo "End maintenance $(date)" >> $LOGFILE
