@@ -16,7 +16,6 @@
 
 - include: "epel.yml"
 - include: "ius.yml"
-- include: "insight-user.yml"
 
 # Set up the hostnames
 #
@@ -25,6 +24,9 @@
   with_items:
     - libsemanage-python
     - libselinux-python
+
+# Making insight user a passwordless sudoer user via Ansible requires the libselinux-python package
+- include: "insight-user.yml"
 
 - name: 'Set up the hostnames. NOTE: You have to use FQDNs in your inventory or assign the >>hostname_fqdn<< for each server.'
   include: "hostname.yml"
