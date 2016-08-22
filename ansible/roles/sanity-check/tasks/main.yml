@@ -25,7 +25,7 @@
   file: path='{{ sanity_check_install_dir }}' state=directory mode=0775 owner=insight group=insight
   become_user: root
 
-- name: Place sanity checker to its final destination (overwrite earlier contents)
+- name: Place sanity checker into its final destination (overwrite earlier contents)
   shell: 'mv -f {{ sanity_check_temporary_download_dir }}/linux_amd64/sanity_check/* {{ sanity_check_install_dir }}'
   become_user: insight
 
@@ -35,11 +35,14 @@
 - name: Make sanity check configuration
   template: src=Config.yml dest={{ sanity_check_install_dir }}/Config.yml owner=insight group=insight
 
+- name: Make sanity check runner script for cron
+  template: src=roles/sanity-check/templates/sanity-check.sh dest={{ sanity_check_install_dir }}/sanity-check.sh owner=insight group=insight mode=0744
+
 # - name: Execute sanity check once
 #   shell: './dbcheck tests/sanity_checks.yml Config.yml'
 #   args:
 #     chdir: '{{ sanity_check_install_dir }}'
 
 - name: Schedule sanity check via cron
-  cron: name="Palette Insight Sanity Checks" minute="*/10" job="{{ sanity_check_install_dir }}/dbcheck {{ sanity_check_install_dir }}/tests/sanity_checks.yml {{ sanity_check_install_dir }}/Config.yml > /dev/null" user=insight
+  cron: name="Palette Insight Sanity Checks" minute="*/10" job="{{ sanity_check_install_dir }}/sanity-check.sh" user=insight
   become_user: root
