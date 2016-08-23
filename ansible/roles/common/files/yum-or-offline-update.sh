@@ -3,7 +3,8 @@
 insight_product=$1
 
 if [[ -z $UPDATE_PROGRESS_FILE ]]; then
-	echo "Insight update progress file is not set! Exiting..."
+	echo "Insight UPDATE_PROGRESS_FILE is not set! Set it for example /tmp/insight-update-progress.log ."
+	echo "Exiting..."
 	exit 1
 fi
 
@@ -15,7 +16,7 @@ else
     exit 1
 fi
 
-echo "Gathering update packages for $insight_product via yum..." >> $UPDATE_PROGRESS_FILE
+echo "Gathering update packages for $insight_product via yum..." > $UPDATE_PROGRESS_FILE
 
 # We need to make sure we don't get our latest package from yum cache.
 sudo yum clean all
@@ -24,7 +25,7 @@ return_code=$?
 
 if [[ return_code -ne 0 ]]; then
 	echo "Failed to update $insight_product via yum! Trying to perform an offline install..." >> $UPDATE_PROGRESS_FILE
-	/opt/update-insight/offline-update-insight.sh $insight_product
+	/opt/update-insight/offline-update-insight-product.sh $insight_product
 	
 	return_code=$?
 

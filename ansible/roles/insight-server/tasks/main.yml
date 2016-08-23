@@ -1,14 +1,17 @@
 ---
 - name: Create Insight Server installer/updater script
-  template:
-    src: roles/insight-server/templates/update-insight-server.sh
-    dest: /etc/palette-insight-server/update-insight-server.sh
+  copy:
+    src: update-insight-server.sh
+    dest: /opt/update-insight/update-insight-server.sh
     owner: root
     group: root
-    state: present
     mode: "0744"
 
 - name: Install Insight Server
-  shell: /etc/palette-insight-server/update-insight-server.sh
+  shell: /opt/update-insight/update-insight-server.sh
+  environment:
+    UPDATE_PROGRESS_FILE: /tmp/insight-initial-update-progress.log
+  become: yes
+  become_user: root
   notify:
     - Restart splunk

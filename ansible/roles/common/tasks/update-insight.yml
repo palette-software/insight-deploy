@@ -1,12 +1,13 @@
 ---
 - name: Write yum updater script for Insight
   copy:
-    src: yum-of-offline-update.sh
+    src: yum-or-offline-update.sh
     dest: /opt/update-insight/
     mode: 0744
 
 - name: Write offline Insight updater script
   copy:
-    src: offline-update-insight.sh
+    src: offline-update-insight-product.sh
     dest: /opt/update-insight/
     mode: 0744
+  

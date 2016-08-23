@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [[ -z $UPDATE_PROGRESS_FILE ]]; then
-	echo "Insight update progress file is not set! Exiting..."
+	echo "Insight UPDATE_PROGRESS_FILE is not set! Exiting..."
 	exit 1
 fi
 
