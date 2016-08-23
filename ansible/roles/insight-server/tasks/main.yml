@@ -1,8 +1,14 @@
 ---
-- name: Install Insight Server package
-  yum: name=palette-insight-server state=latest update_cache=yes
-  notify:
-    - Restart palette-insight-server
-    - Restart splunk
-    - Restart nginx
+- name: Create Insight Server installer/updater script
+  template:
+    src: roles/insight-server/templates/update-insight-server.sh
+    dest: /etc/palette-insight-server/update-insight-server.sh
+    owner: root
+    group: root
+    state: present
+    mode: "0744"
 
+- name: Install Insight Server
+  shell: /etc/palette-insight-server/update-insight-server.sh
+  notify:
+    - Restart splunk
