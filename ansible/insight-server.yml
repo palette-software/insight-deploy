@@ -14,10 +14,10 @@
     - nginx
     - supervisor
     - splunkforwarder
-    - golang
+    # - golang
     - greenplum
-    - greenplum-data
     - insight-server
+    - greenplum-data
     - insight-loadtables
     - insight-services-webui
     - sanity-check

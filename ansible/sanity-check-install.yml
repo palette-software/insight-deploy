@@ -1,0 +1,13 @@
+---
+- name: Setup sanity checks on database
+  hosts: insight-server
+  remote_user: centos
+  become: yes
+  become_user: insight
+
+  vars:
+    sanity_check_temporary_download_dir: /tmp/dl-github-release
+    sanity_check_install_dir: /opt/insight-sanity-check
+
+  roles:
+    - sanity-check

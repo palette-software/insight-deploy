@@ -10,16 +10,6 @@ if [[ -n $SSH_CONNECTION ]] ; then
   SWAP=`free -m | grep "Swap" | awk '{print $2,"-",$3,"-",$4}'`
   PSA=`ps -Afl | wc -l`
 
-  # time of day
-  HOUR=$(date +"%H")
-  if [ $HOUR -lt 12  -a $HOUR -ge 0 ]
-  then    TIME="morning"
-  elif [ $HOUR -lt 17 -a $HOUR -ge 12 ]
-  then    TIME="afternoon"
-  else
-      TIME="evening"
-  fi
-
   #System uptime
   uptime=`cat /proc/uptime | cut -f1 -d.`
   upDays=$((uptime/60/60/24))
@@ -33,11 +23,6 @@ if [[ -n $SSH_CONNECTION ]] ; then
   LOAD15=`cat /proc/loadavg | awk {'print $3'}`
 
   echo ""
-  echo -e "\e[7m--- GOOD $TIME $USER ----\e[0m"
-  echo ""
-  MESSAGE=`/usr/bin/fortune | /usr/bin/cowsay`
-  echo -e " $MESSAGE"
-
   COLOR_COLUMN="\e[1m-"
   COLOR_VALUE="\e[31m"
   RESET_COLORS="\e[0m"
