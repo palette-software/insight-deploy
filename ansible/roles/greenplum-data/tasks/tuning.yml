@@ -1,5 +1,5 @@
 - name: Calc Greenplum virtual memory protection limit
-  script: "gp_vmem_protect_limit.sh {{ ansible_processor_vcpus // 2 }} {{ greenplum_other_mem }}"
+  script: "gp_vmem_protect_limit.sh {{num_segments or 4}} {{ greenplum_other_mem }}"
   register: gp_vmem_protect_limit_amt
 
 - name: Setting Greenplum virtual memory protection limit

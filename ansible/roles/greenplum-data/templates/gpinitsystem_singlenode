@@ -57,7 +57,7 @@ PORT_BASE=40000
 # may want to create these directories on the segment hosts before running
 # gpinitsystem and chown them to the appropriate user.
 
-declare -a DATA_DIRECTORY=({% for i in range(0,(ansible_processor_vcpus // 2)) %} {{ greenplum_datadir }}/primary {% endfor %})
+declare -a DATA_DIRECTORY=({% for i in range(0, num_segments or 4) %} {{ greenplum_datadir }}/primary {% endfor %})
 
 
 

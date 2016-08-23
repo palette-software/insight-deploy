@@ -9,8 +9,8 @@
 - name: Install nginx
   yum: name=nginx state=present
 
-- name: Configure SELinux to allow httpd network connect
-  seboolean: name=httpd_can_network_connect state=yes persistent=yes
+# - name: Configure SELinux to allow httpd network connect
+#   seboolean: name=httpd_can_network_connect state=yes persistent=yes
 
 
 # FIREWALLD IS ONLY FOR CENTOS & RH > 7

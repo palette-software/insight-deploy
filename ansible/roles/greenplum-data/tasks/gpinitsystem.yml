@@ -11,7 +11,7 @@
 - name: Create gphosts file
   template: src=gphosts dest={{ greenplum_hosts_file }} owner=root group=root mode="u=rw,g=r,o=r"
 
-- name: Create gpinitsystem_singlenode file for {{ ansible_processor_vcpus }} segments
+- name: Create gpinitsystem_singlenode file for {{num_segments or 4}} segments
   template: src=gpinitsystem_singlenode dest=/home/{{ greenplum_user }}/gpinitsystem_singlenode owner={{ greenplum_user }} group={{ greenplum_user }}
 
 - name: Add MASTER_DATA_DIRECTORY to .bashrc

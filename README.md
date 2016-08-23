@@ -113,8 +113,31 @@ app_code_user: "{{ uservar }}"
 aws_region: us-east-1 # AWS region, where instance will be created
 
 # AWS instance type
-instance_type: t2.micro 
+instance_type: t2.micro
 
 # Centos 6.5 w. updates / HVM / US-East
 ami: ami-1c221e76
 ```
+
+
+## Building Insight-Server VM disk image for On-Premise Install
+
+You need packer, ansible, qemu.
+```
+nix-shell  # load the environment defined in default.nix, containing the above tools
+```
+
+Run the build:
+```
+./build_insight_server_opi_diskimage.sh
+```
+
+Result:
+- `output-insight-server-centos-68-provision/output-insight-server-68/provision.vmdk` (8G root + 32G swap)
+- `output-insight-server-centos-68-data/output-insight-server-centos-68-data.vmdk` (1T data)
+
+
+TODO:
+- add license to image
+- customize image for other customers
+
