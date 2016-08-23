@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
+if [[ -z $UPDATE_PROGRESS_FILE ]]; then
+	echo "Insight update progress file is not set! Exiting..."
+	exit 1
+fi
+
 insight_product=$1
 if [[ -n "$insight_product" ]]; then
-    echo "Offline updating insight product: $insight_product"
+    echo "Offline updating Insight product: $insight_product"
 else
     echo "Missing parameter!"
     echo "Usage: update-insight-locally.sh <product>"
@@ -11,7 +16,7 @@ fi
 
 # By convention the update file needs to be located in the /tmp folder
 offline_update_file=/tmp/$insight_product.rpm
-echo "Looking for $offline_update_file ..."
+echo "Looking for $offline_update_file ..." >> $UPDATE_PROGRESS_FILE
 
 rpm -Uvh $offline_update_file
 return_code=$?
@@ -25,9 +30,9 @@ if [[ return_code -eq 2 ]]; then
 fi
 
 if [[ return_code -ne 0 ]]; then
-	echo "Failed to update $insight_product offline!"
+	echo "Failed to update $insight_product offline!" >> $UPDATE_PROGRESS_FILE
 	exit 1
 fi
 
-echo "Successfully updated $insight_product offline."
+echo "Successfully updated $insight_product offline." >> $UPDATE_PROGRESS_FILE
 exit 0

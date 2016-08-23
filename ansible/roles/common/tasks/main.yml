@@ -43,6 +43,9 @@
 - name: Sudo tabcompletion
   lineinfile: dest=/etc/profile regexp='^complete -cf sudo$' line='complete -cf sudo'
 
+- name: Install Insight update scripts
+  include: "update-insight.yml"
+
 - name: Set the server timezone to UTC
   include: "utc_timezone.yml"
 

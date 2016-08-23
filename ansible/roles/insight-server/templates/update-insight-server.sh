@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
-# We need to make sure we don't get our latest package from yum cache.
-sudo yum clean all
-sudo yum install -y palette-insight-server
+# Stop on the first error
+set -e
+
+# First try to update Palette Insight Server via yum, but if it fails,
+# try to perform an offline update.
+/opt/update-insight/yum-or-offline-update.sh palette-insight-server
 
 sudo supervisorctl restart palette-insight-server
-
 sudo service nginx restart
+
+exit 0
