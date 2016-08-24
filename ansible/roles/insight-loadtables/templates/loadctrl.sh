@@ -15,8 +15,8 @@ set -e
 
     last_maintenance_ts=$(cat last_maintenance_ts)
     currtime=$(date)
-	#10:30 is 03:30 in USA SF time
-    maintenance_after=1030
+	#UTC 09:00 is 02:00 in USA SF time
+    maintenance_after=0900
 
 	#Check if current time has passed the maintenece time and there has been NO maintenance in that day yet.
     if [ $(date -d "$currtime" +"%H%M") -gt $maintenance_after -a $(date -d "$currtime" +"%Y%m%d") -gt $(date -d "$last_maintenance_ts" +"%Y%m%d") ]
