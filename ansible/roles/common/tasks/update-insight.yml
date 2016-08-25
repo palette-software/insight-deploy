@@ -10,4 +10,3 @@
     src: offline-update-insight-product.sh
     dest: /opt/update-insight/
     mode: 0744
-  
