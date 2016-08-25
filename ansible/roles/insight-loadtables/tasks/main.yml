@@ -1,5 +1,5 @@
 ---
-- name: Install psycopg2 for ansible to momdify postgres
+- name: Install psycopg2 for ansible to modify postgres
   yum: name=python-psycopg2 state=present
 
 - name: Install Insight-loadTables to {{ insight_talend_location }}
