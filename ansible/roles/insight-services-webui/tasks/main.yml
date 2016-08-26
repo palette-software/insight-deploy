@@ -25,11 +25,8 @@
   become_user: root
 
 - name: Pip3 install status page requisities
-  shell: pip3 install {{ item }}
+  shell: pip3 install -r {{ insight_services_webui_dir }}/requirements.txt
   become_user: root
-  with_items:
-    - mako
-    - pyjade
 
 - name: Create temp directory for github-release-downloader
   file: path={{ dl_github_temporary_download_dir }} state=directory mode=0775 owner=insight group=insight
