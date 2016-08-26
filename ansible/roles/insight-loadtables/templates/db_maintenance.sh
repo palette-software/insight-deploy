@@ -173,4 +173,37 @@ psql $DBNAME -c "alter role readonly with CONNECTION LIMIT -1" >> $LOGFILE 2>&1
 echo "End set connection limit for readonly to -1 $(date)" >> $LOGFILE
 
 
+echo "Start handle missing grants on tables, $(date)" >> $LOGFILE
+
+psql -tc "select
+			case when r = 1 then owner_to_updater
+				 when r = 2 then grant_to_looker
+			end as cmd
+		from 
+			(
+			select
+				'alter table ' || t.schemaname || '.' || t.tablename || ' owner to palette_palette_updater;' as owner_to_updater,
+				'grant select on ' || t.schemaname || '.' || t.tablename || ' to palette_palette_looker;' as grant_to_looker
+			from pg_tables et
+				inner join  pg_tables t on (t.schemaname = et.schemaname and
+											case when substr(t.tablename, 1, 2) = 'h_' then substr(t.tablename, 3)
+												 else t.tablename
+											end = substr(et.tablename, 5)                                
+											)
+				left outer join information_schema.role_table_grants tg on (tg.table_schema = t.schemaname and
+																			tg.table_name = t.tablename and
+																			tg.privilege_type = 'SELECT' and
+																			tg.grantee = 'palette_palette_looker')
+			where 
+				et.schemaname = '$SCHEMA' and
+				et.tablename like 'ext#_%' escape '#' and
+				et.tablename <> 'ext_error_table' and
+				tg.grantee is null
+			) p,
+			(select generate_series(1,2) as r) gs
+         " $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
+								
+echo "End handle missing grants on tables, $(date)" >> $LOGFILE
+
+
 echo "End maintenance $(date)" >> $LOGFILE
