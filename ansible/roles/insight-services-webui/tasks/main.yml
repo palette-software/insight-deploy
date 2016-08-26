@@ -53,7 +53,7 @@
     copy: no
   become_user: insight
 
-- name: Place Insight Services Status Paget into its final destination (overwrite earlier contents)
+- name: Place Insight Services Status Page into its final destination (overwrite earlier contents)
   shell: 'cp -rf {{ dl_github_temporary_download_dir }}/home/travis/build/palette-software/insight-services-status/* {{ insight_services_webui_dir }}'
   become_user: insight
 
