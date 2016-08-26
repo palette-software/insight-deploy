@@ -26,11 +26,19 @@ insight_status() {
     header "Temporary backup crontab ${TEMP_CRON_FILE} exists"
   fi
 
+  header "Server status"
+  uptime=`cat /proc/uptime | cut -f1 -d.`
+  upDays=$((uptime/60/60/24))
+  upHours=$((uptime/60/60%24))
+  upMins=$((uptime/60%60))
+  upSecs=$((uptime%60))
+  echo "uptime: $upDays day, $upHours:$upMins:$upSecs"
+
   header "Greenplum status"
   service greenplum status
 
-  header "Insight-GPFDist status"
-  supervisorctl status insight-gpfdist
+  header "Palette Insight Services status"
+  supervisorctl status
 
   header "Current crontab used for $CRON_USER"
   crontab -l -u $CRON_USER
