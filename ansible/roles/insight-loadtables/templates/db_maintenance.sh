@@ -92,6 +92,7 @@ psql -tc "select
                                                                                                                  o.actionname = 'VACUUM'
                                                                                                                  )
                         where
+								p.partitionschemaname = '$SCHEMA' and
                                 p.tablename in ('p_serverlogs',
                                                                 'p_cpu_usage',
                                                                 'p_cpu_usage_report',
@@ -119,6 +120,7 @@ from (
                                                      o.actionname = 'VACUUM'
                                                      )
 	where
+			p.partitionschemaname = '$SCHEMA' and
 	        p.tablename in (
 							'p_interactor_session',
 							'p_cpu_usage_agg_report',
@@ -144,6 +146,7 @@ psql -tc "select
                                                                                                          o.actionname = 'ANALYZE'
                                                                                                          )
                 where
+						p.partitionschemaname = '$SCHEMA' and
                         p.tablename in ('p_serverlogs',
                                                         'p_cpu_usage',
                                                         'p_cpu_usage_report') and
@@ -168,6 +171,7 @@ from (
                                                      o.actionname = 'ANALYZE'
                                                      )
 	where
+			p.partitionschemaname = '$SCHEMA' and
 	        p.tablename in (
 							'p_interactor_session',
 							'p_cpu_usage_agg_report',
