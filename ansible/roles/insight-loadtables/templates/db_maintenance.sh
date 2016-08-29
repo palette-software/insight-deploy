@@ -123,8 +123,7 @@ from (
 							'p_interactor_session',
 							'p_cpu_usage_agg_report',
 							'p_process_class_agg_report',
-							'p_cpu_usage_bootstrap_rpt',
-							'p_serverlogs_bootstrap_rpt') and
+							'p_cpu_usage_bootstrap_rpt') and
 	        p.parentpartitiontablename is null) parts
 where 
 	parts.rn = 1
@@ -173,8 +172,7 @@ from (
 							'p_interactor_session',
 							'p_cpu_usage_agg_report',
 							'p_process_class_agg_report',
-							'p_cpu_usage_bootstrap_rpt',
-							'p_serverlogs_bootstrap_rpt') and
+							'p_cpu_usage_bootstrap_rpt') and
 	        p.parentpartitiontablename is null) parts
 where 
 	parts.rn = 1
