@@ -81,10 +81,10 @@ EOF
 
 echo "End drop indexes $(date)" >> $LOGFILE
 
-echo "Start vacuum tables by new partitions $(date)" >> $LOGFILE
+echo "Start vacuum (vacuum analyze in the case of p_serverlogs_bootstrap_rpt) tables by new partitions $(date)" >> $LOGFILE
 
 psql -tc "select
-                                'vacuum ' || p.schemaname || '.\"' || p.partitiontablename || '\";'
+                                case when p.tablename = 'p_serverlogs_bootstrap_rpt' then 'vacuum analyze' else 'vacuum ' end || p.schemaname || '.\"' || p.partitiontablename || '\";'
                         from
                                 pg_partitions p
                                 left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
@@ -94,19 +94,44 @@ psql -tc "select
                         where
                                 p.tablename in ('p_serverlogs',
                                                                 'p_cpu_usage',
-                                                                'p_cpu_usage_report'
-                                                                /*'p_interactor_session',
-                                                                'p_cpu_usage_agg_report',
-                                                                'p_process_class_agg_report',
-                                                                'p_cpu_usage_bootstrap_rpt',
-                                                                'p_serverlogs_bootstrap_rpt'*/
+                                                                'p_cpu_usage_report',
+																'p_serverlogs_bootstrap_rpt'
                                                                 ) and
                                 p.parentpartitiontablename is null and
                                 o.statime is null and
                                 to_date(p.partitionname, 'yyyymmdd') < now()::date
                 " $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
 
-echo "End vacuum tables by new partitions $(date)" >> $LOGFILE
+
+echo "Start vacuum newly partitioned tables by new partitions $(date)" >> $LOGFILE
+
+psql -tc "
+select 
+	vac_command
+from (
+	select
+	        'vacuum ' || p.schemaname || '.\"' || p.partitiontablename || '\";' vac_command,
+			row_number() over (partition by p.tablename order by partitionname desc) rn
+	from
+	        pg_partitions p
+	        left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
+                                                     o.objname = p.partitiontablename and
+                                                     o.actionname = 'VACUUM'
+                                                     )
+	where
+	        p.tablename in (
+							'p_interactor_session',
+							'p_cpu_usage_agg_report',
+							'p_process_class_agg_report',
+							'p_cpu_usage_bootstrap_rpt',
+							'p_serverlogs_bootstrap_rpt') and
+	        p.parentpartitiontablename is null) parts
+where 
+	parts.rn = 1
+                " $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
+
+echo "End vacuum newly partitioned tables by new partitions $(date)" >> $LOGFILE				
+echo "End vacuum (vacuum analyze in the case of p_serverlogs_bootstrap_rpt) tables by new partitions $(date)" >> $LOGFILE
 
 
 echo "Start analyze tables by new partitions $(date)" >> $LOGFILE
@@ -122,34 +147,42 @@ psql -tc "select
                 where
                         p.tablename in ('p_serverlogs',
                                                         'p_cpu_usage',
-                                                        'p_cpu_usage_report'
-                                                        /*'p_interactor_session',
-                                                        'p_cpu_usage_agg_report',
-                                                        'p_process_class_agg_report',
-                                                        'p_cpu_usage_bootstrap_rpt',
-                                                        'p_serverlogs_bootstrap_rpt'*/) and
+                                                        'p_cpu_usage_report') and
                         p.parentpartitiontablename is not null and
                         o.statime is null and
                         to_date(p.parentpartitionname, 'yyyymmdd') < now()::date
                 " $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
 
+echo "Start analyze newly partitioned tables by new partitions $(date)" >> $LOGFILE
+
+psql -tc "
+select 
+	ana_command
+from (
+	select
+	        'analyze ' || p.schemaname || '.\"' || p.partitiontablename || '\";' ana_command,
+			row_number() over (partition by p.tablename order by partitionname desc) rn
+	from
+	        pg_partitions p
+	        left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
+                                                     o.objname = p.partitiontablename and
+                                                     o.actionname = 'ANALYZE'
+                                                     )
+	where
+	        p.tablename in (
+							'p_interactor_session',
+							'p_cpu_usage_agg_report',
+							'p_process_class_agg_report',
+							'p_cpu_usage_bootstrap_rpt',
+							'p_serverlogs_bootstrap_rpt') and
+	        p.parentpartitiontablename is null) parts
+where 
+	parts.rn = 1
+                " $DBNAME | psql -a $DBNAME >> $LOGFILE 2>&1
+
+echo "End analyze newly partitioned tables by new partitions $(date)" >> $LOGFILE
+				
 echo "End analyze tables by new partitions $(date)" >> $LOGFILE
-
-
-echo "Start vacuum analyze rest of the tables $(date)" >> $LOGFILE
-
-psql $DBNAME >> $LOGFILE 2>&1 <<EOF
-\set ON_ERROR_STOP on
-set search_path = $SCHEMA;
-VACUUM ANALYZE p_interactor_session;
-VACUUM ANALYZE p_cpu_usage_agg_report;
-VACUUM ANALYZE p_process_class_agg_report;
-VACUUM ANALYZE p_cpu_usage_bootstrap_rpt;
-VACUUM ANALYZE p_serverlogs_bootstrap_rpt;
-
-EOF
-
-echo "End vacuum tables $(date)" >> $LOGFILE
 
 echo "Start create indexes $(date)" >> $LOGFILE
 
