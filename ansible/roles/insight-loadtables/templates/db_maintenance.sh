@@ -84,7 +84,7 @@ echo "End drop indexes $(date)" >> $LOGFILE
 echo "Start vacuum (vacuum analyze in the case of p_serverlogs_bootstrap_rpt) tables by new partitions $(date)" >> $LOGFILE
 
 psql -tc "select
-                                case when p.tablename = 'p_serverlogs_bootstrap_rpt' then 'vacuum analyze' else 'vacuum ' end || p.schemaname || '.\"' || p.partitiontablename || '\";'
+                                case when p.tablename = 'p_serverlogs_bootstrap_rpt' then 'vacuum analyze ' else 'vacuum ' end || p.schemaname || '.\"' || p.partitiontablename || '\";'
                         from
                                 pg_partitions p
                                 left outer join pg_stat_operations o on (o.schemaname = p.schemaname and
