@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 STATUS_FILE={{ insight_services_data_dir }}/insight-status
 
 LOADTABLES_LOCKFILE=/tmp/PI_ImportTables_prod.flock
@@ -36,6 +34,9 @@ insight_status() {
 
   header "Greenplum status"
   service greenplum status
+
+  header "Version Info"
+  sudo rpm -qa | grep palette
 
   header "Palette Insight Services status"
   supervisorctl status
