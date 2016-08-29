@@ -1,0 +1,22 @@
+---
+- name: Install prerequisities for creating centos user
+  yum: name={{ item }} state=present
+  with_items:
+  - libselinux-python
+
+- name: Make sure centos user is present
+  user: name=centos
+        comment="Default centos user"
+        state=present
+        shell=/bin/bash
+        home=/home/centos
+        groups=wheel
+  register: centos_user_created
+
+- name: Make centos user a passwordless sudoer user
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    line: 'centos ALL=(ALL) NOPASSWD:ALL'
+    validate: 'visudo -cf %s'
+  #when: centos_user_created|changed

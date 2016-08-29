@@ -1,0 +1,13 @@
+---
+- name: Ensure centos user
+  hosts: insight-server
+  remote_user: root
+  become: yes
+  become_user: root
+
+  roles:
+    - centos-user
+
+  tasks:
+    - name: Place your SSH key to authorized keys of centos user
+      authorized_key: user=centos key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
