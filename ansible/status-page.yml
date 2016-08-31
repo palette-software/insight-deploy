@@ -1,5 +1,5 @@
 ---
-- name: Setup sanity checks on database
+- name: Setup Insight Services Status Page
   hosts: insight-server
   remote_user: centos
   become: yes
