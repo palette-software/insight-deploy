@@ -25,8 +25,12 @@
     - libsemanage-python
     - libselinux-python
 
-# Making insight user a passwordless sudoer user via Ansible requires the libselinux-python package
-- include: "insight-user.yml"
+# This step requires the libselinux-python package
+- name: Make insight user a passwordless sudoer user
+  include: "insight-user.yml"
+
+- name: Install Insight Toolkit
+  include: "insight-toolkit.yml"
 
 - name: 'Set up the hostnames. NOTE: You have to use FQDNs in your inventory or assign the >>hostname_fqdn<< for each server.'
   include: "hostname.yml"
@@ -42,9 +46,6 @@
 
 - name: Sudo tabcompletion
   lineinfile: dest=/etc/profile regexp='^complete -cf sudo$' line='complete -cf sudo'
-
-- name: Install Insight update scripts
-  include: "update-insight.yml"
 
 - name: Set the server timezone to UTC
   include: "utc_timezone.yml"
