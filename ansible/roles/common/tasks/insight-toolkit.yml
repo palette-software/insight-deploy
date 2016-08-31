@@ -1,0 +1,3 @@
+---
+- name: Yum install Insight Toolkit
+  yum: name=palette-insight-toolkit state=latest

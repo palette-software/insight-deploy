@@ -58,11 +58,11 @@
   yum: name=palette-insight-reporting state=latest update_cache=yes
 
 - name: Install the data model
-  shell: /opt/palette-insight-reporting/update-data-model.sh {{ insight_datamodel_version }}
+  shell: /opt/insight-toolkit/update-data-model.sh {{ insight_datamodel_version }} chdir=/opt/insight-toolkit
   environment:
     UPDATE_PROGRESS_FILE: /tmp/insight-initial-update-progress.log
   notify: Restart splunk
   register: datamodel_install_res
   changed_when: "datamodel_install_res.rc == 0 and '-------------------- OK --------------------' not in datamodel_install_res"
   become: yes
-  become_user: root
+  become_user: insight
