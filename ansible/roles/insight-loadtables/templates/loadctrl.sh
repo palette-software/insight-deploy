@@ -6,7 +6,10 @@ LOGFILE="./loadctrl.log"
 set -e
 
 (
-    flock -n 200
+    # Pick an arbitrary file descriptor number. You can pick anything, but by default the limit of the
+    # maximum open file descriptors is 1024. And the selected file descriptor must be lower than the limit,
+    # otherwise the flock command will fail.
+    flock -n 768
 
     if [ ! -e last_maintenance_ts ]
     then
@@ -31,4 +34,4 @@ set -e
         /opt/palette-insight-talend/run_reporting.sh
         echo End reporting $(date) >> $LOGFILE		
     fi
-) 200>${LOCKFILE}
+) 768>${LOCKFILE}
