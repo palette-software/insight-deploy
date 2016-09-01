@@ -29,9 +29,6 @@
 - name: Make insight user a passwordless sudoer user
   include: "insight-user.yml"
 
-- name: Install Insight Toolkit
-  include: "insight-toolkit.yml"
-
 - name: 'Set up the hostnames. NOTE: You have to use FQDNs in your inventory or assign the >>hostname_fqdn<< for each server.'
   include: "hostname.yml"
 
@@ -50,3 +47,5 @@
 - name: Set the server timezone to UTC
   include: "utc_timezone.yml"
 
+- name: Install Insight Toolkit
+  include: "insight-toolkit.yml"
