@@ -46,7 +46,7 @@ psql -tc "select
                         from pg_partitions t
                         where
                                 schemaname = '$SCHEMA' and
-                                tablename in ('threadinfo', 'serverlogs', 'p_threadinfo', 'p_serverlogs', 'p_cpu_usage', 'p_cpu_usage_report') and
+                                tablename in ('plainlogs', 'threadinfo', 'serverlogs', 'p_threadinfo', 'p_serverlogs', 'p_cpu_usage', 'p_cpu_usage_report') and
                                 partitiontype = 'range' and
                                 partitionname <> '10010101'
                         ) a
