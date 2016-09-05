@@ -1,0 +1,9 @@
+---
+- name: Setup Insight Services Status Page
+  hosts: insight-server
+  remote_user: centos
+  become: yes
+  become_user: insight
+
+  roles:
+    - insight-services-webui

@@ -1,0 +1,3 @@
+---
+sanity_check_temporary_download_dir: /tmp/dl-github-release
+sanity_check_install_dir: /opt/insight-sanity-check

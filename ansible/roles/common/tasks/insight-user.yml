@@ -1,4 +1,11 @@
 ---
 - name: Create / adjust the insight users
-  user: name=insight comment="Palette Insight User" state=present shell=/bin/bash home=/home/insight
+  user: name=insight
+        comment="Palette Insight User"
+        state=present
+        shell=/bin/bash
+        home=/home/insight
+        groups=wheel
 
+- name: Make insight user a passwordless sudoer user
+  lineinfile: dest=/etc/sudoers state=present line='insight ALL=(ALL) NOPASSWD:ALL' validate='visudo -cf %s'

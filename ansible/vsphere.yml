@@ -1,0 +1,70 @@
+---
+- hosts: localhost
+  gather_facts: false
+  connection: local
+  user: remote
+  # sudo: true
+
+  vars_prompt:
+    - name: "vcenter_hostname"
+      prompt: "Enter vcenter hostname"
+      private: no
+      default: "88.151.101.26"
+    - name: "vcenter_user"
+      prompt: "Enter vcenter username"
+      private: no
+      default: "root"
+    - name: "vcenter_pass"
+      prompt: "Enter vcenter password"
+      private: yes
+
+  tasks:
+    - vsphere_guest:
+        validate_certs: false
+        vcenter_hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_user }}"
+        password: "{{ vcenter_pass }}"
+        guest: opi-ansible
+        state: powered_on
+        vm_extra_config:
+          vcpu.hotadd: yes
+          mem.hotadd:  yes
+          notes: This is a test VM for Ansible provision
+          # folder: MyFolder
+        vm_disk:
+          disk1:
+            size_gb: 10
+            type: thin
+            datastore: ssd2
+            folder: disks/disk1
+          disk2:
+            size_gb: 1000
+            type: thin
+            datastore: datastore1
+            folder: disks/disk2
+          disk3:
+            size_gb: 32
+            type: thin
+            datastore: datastore1
+            folder: disks/disk3
+        vm_nic:
+          nic1:
+            type: vmxnet3
+            network: VM Network
+            network_type: standard
+            n:
+            # type: vmxnet3
+            # network: dvSwitch Network
+            # network_type: dvs
+        vm_hardware:
+          memory_mb: 32768
+          num_cpus: 8
+          osid: centos64Guest
+          scsi: paravirtual
+          vm_cdrom:
+            type: "iso"
+            iso_path: "datastore1/Install/Centos-6-Kickstarter-XFS.iso"
+        vm_hw_version: vmx-08
+        esxi:
+          datacenter: ha-datacenter
+          hostname: localhost.localdomain

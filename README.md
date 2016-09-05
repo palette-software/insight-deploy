@@ -31,14 +31,16 @@ cd rpm/greenplum
 ## Installing the insight-server base (without greenplum) on a machine:
 
 ```bash
-ansible-playbook insight-server.yml -i <INVENTORY> --private-key <PRIVATE_KEY_FILE> --extra-vars "uservar=<SSH_USERNAME_FOR_KEY>"
+ansible-playbook insight-server.yml -i <INVENTORY> --private-key <PRIVATE_KEY_FILE> --extra-vars "uservar=<SSH_USERNAME_FOR_KEY> --vault-password-file <VAULT_PASSWORD_FILE>"
 ```
+
+The <VAULT_PASSWORD_FILE> is just a text file, which only contains the password for the Ansible Vault. The password that we use can be found in 1password under the name of [Ansible Vault secrets](https://palette-software.1password.com/vaults/pt4etflm6axc7gsatckg2k4nqe/allitems/g2hzbj2dhvhtzolopga2hirxxy).
 
 
 For example to install on a list of EC2 hosts stored in aws-hosts.ini:
 
 ```bash
-ansible-playbook insight-server.yml -i ./aws-hosts.ini --private-key ~/.ssh/palette-insight-standard-keypair-2016-01-19.pem.txt -v --extra-vars "uservar=ec2-user"
+ansible-playbook insight-server.yml -i ./aws-hosts.ini --private-key ~/.ssh/palette-insight-standard-keypair-2016-01-19.pem.txt -v --extra-vars "uservar=ec2-user --vault-password-file ~/.ansible_vault_pass.txt"
 ```
 
 
