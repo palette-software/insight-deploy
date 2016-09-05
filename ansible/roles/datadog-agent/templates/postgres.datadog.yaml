@@ -5,7 +5,7 @@ instances:
     port: 5432
     username: datadog
     password: {{ datadog_pg_role_password }}
-#    dbname: db_name
+    dbname: palette
 #    tags:
 #      - optional_tag1
 #      - optional_tag2

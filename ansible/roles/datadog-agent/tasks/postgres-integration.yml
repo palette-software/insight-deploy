@@ -1,0 +1,24 @@
+---
+- name: Create the Datadog role for postgres
+  script: 'datadog_pg_role_creator.sh "{{ datadog_pg_role_password }}"'
+  become_user: gpadmin
+
+- name: Add postgres.yaml to DataDog config
+  template:
+    src: postgres.datadog.yaml
+    dest: /etc/dd-agent/conf.d/postgres.yaml
+    owner: dd-agent
+    group: root
+
+- name: Setup userlist.txt for Postgres Bouncer integration
+  lineinfile:
+    dest: "{{ greenplum_install_dir }}/share/doc/pgbouncer/userlist.txt"
+    state: present
+    line: '"datadog" "{{ datadog_pg_role_password }}"'
+
+- name: Edit conf.d/pgbouncer.yaml
+  template:
+    src: pgbouncer.yaml
+    dest: /etc/dd-agent/conf.d/pgbouncer.yaml
+    owner: dd-agent
+    group: root
