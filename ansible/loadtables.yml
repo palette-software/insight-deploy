@@ -1,6 +1,6 @@
 ---
 - name: Loadtable update
-  hosts: insight-server
+  hosts: "{{ channel | default('insight-server') }}"
   remote_user: "{{ uservar }}"
   become: yes
   become_user: root

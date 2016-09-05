@@ -1,0 +1,50 @@
+---
+- name: Create folder for Insight Services Status Page
+  file: path={{ insight_services_webui_dir }} state=directory mode=0755 owner=insight group=insight
+  become_user: root
+
+- name: Create the insight-services log folder
+  file: path={{ insight_services_log_dir }} state=directory mode=0755 owner=insight group=insight
+  become_user: root
+
+- name: Install python3.5 and pip3.5
+  yum:
+    name: '{{ item }}'
+    state: latest
+    update_cache: yes
+  become_user: root
+  with_items:
+    - python35u
+    - python35u-pip
+
+- name: Create python3 symlinks
+  file: src=/usr/bin/{{ item.src }} dest=/usr/bin/{{ item.dest }} state=link owner=root group=root
+  with_items:
+    - { src: 'python3.5', dest: 'python3' }
+    - { src: 'pip3.5', dest: 'pip3' }
+  become_user: root
+
+- name: Collect Insight Services Status Page RPM
+  yum:
+    name: palette-insight-website
+    state: latest
+
+- name: Pip3 install status page requisities
+  shell: pip3 install -r {{ insight_services_webui_dir }}/requirements.txt
+  become_user: root
+
+- name: Create the insight-services-webui service via supervisord
+  template: src=supervisor.conf dest=/etc/supervisord.d/insight-services-webui.ini owner=root group=root mode=664
+  become_user: root
+
+- name: Update the nginx default site to forward requests to the services webui
+  template: src=nginx.site.conf dest=/etc/nginx/conf.d/default.conf owner=root group=root mode=0644
+  become_user: root
+
+- name: (Re)start insight-services-webui via supervisord
+  supervisorctl: name=insight-services-webui state=restarted
+  become_user: root
+
+- name: Reload the nginx configuration so it forwards the http root to the insight-services
+  service: name=nginx state=reloaded
+  become_user: root

@@ -16,6 +16,6 @@
   register: splunk_init_script
 
 - name: Setup splunk to run on system start
-  command: /opt/splunkforwarder/bin/splunk enable boot-start -user splunk
+  command: /opt/splunkforwarder/bin/splunk enable boot-start --accept-license -user splunk
   when: not splunk_init_script.stat.exists
 

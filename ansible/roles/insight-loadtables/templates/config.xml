@@ -56,6 +56,20 @@
       <Table_names name="hist_schedules" type="incremental"/>
       <Table_names name="hist_workbooks" type="incremental"/>
       <Table_names name="historical_events" type="incremental"/>
+      <Table_names name="hist_capabilities" type="incremental"/>
+      <Table_names name="hist_configs" type="incremental"/>
+      <Table_names name="hist_tags" type="incremental"/>
+      <Table_names name="historical_disk_usage" type="incremental"/>
+      <Table_names name="historical_event_types" type="incremental"/>
+      <Table_names name="user_default_customized_views" type="full" scd="yes" pk="id"/>
+      <Table_names name="subscriptions_customized_views" type="full" scd="yes" pk="id"/>
+      <Table_names name="subscriptions_views" type="full" scd="yes" pk="id"/>
+      <Table_names name="subscriptions_workbooks" type="full" scd="yes" pk="id"/>
+      <Table_names name="permission_reasons" type="full" scd="yes" pk="precedence"/>
+      <Table_names name="capability_roles" type="full" scd="yes" pk="id"/>
+      <Table_names name="next_gen_permissions" type="full" scd="yes" pk="id"/>
+      <Table_names name="capabilities" type="full" scd="yes" pk="id"/>
+      <Table_names name="subscriptions" type="full" scd="yes" pk="id"/>      
 
       <!-- Append only tables from the tableau repository -->
       <Table_names name="http_requests" type="incremental"/>

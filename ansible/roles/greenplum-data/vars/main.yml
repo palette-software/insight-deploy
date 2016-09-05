@@ -2,7 +2,7 @@
 greenplum_install_dir: "{{ greenplum_prefix }}/greenplum-db-{{ greenplum_version_target }}"
 greenplum_datadir: /data
 greenplum_master_datadir: /data/master/gpsne-1
-greenplum_download_url: http://rpm.palette-software.net/install/greenplum/{{ greenplum_zip }}
+greenplum_download_url: https://rpm.palette-software.com/install/greenplum/{{ greenplum_zip }}
 
 greenplum_hosts_file: /etc/gphosts
 greenplum_user: gpadmin

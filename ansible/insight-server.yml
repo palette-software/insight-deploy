@@ -1,6 +1,6 @@
 ---
-- name: Provision / update a Palette Insight Server machine
-  hosts: insight-server
+- name: Install / Upgrade Palette Insight-server
+  hosts: "{{ channel | default('insight-server') }}"
   remote_user: "{{ uservar }}"
   become: yes
   become_user: root
@@ -13,9 +13,10 @@
     - nginx
     - supervisor
     - splunkforwarder
-    - golang
+    # - golang
     - greenplum
-    - greenplum-data
     - insight-server
+    - greenplum-data
     - insight-loadtables
-
+    - insight-services-webui
+    - sanity-check
