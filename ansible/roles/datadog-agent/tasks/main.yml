@@ -21,7 +21,7 @@
     line: "api_key: {{ datadog_api_key }}"
     owner: dd-agent
     group: root
-    mode: 0644
+    mode: 0600
   when: not dd_config_file.stat.exists
 
 - name: Setup Postgres integrations

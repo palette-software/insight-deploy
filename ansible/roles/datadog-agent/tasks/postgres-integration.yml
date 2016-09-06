@@ -10,15 +10,15 @@
     owner: dd-agent
     group: root
 
-- name: Setup userlist.txt for Postgres Bouncer integration
-  lineinfile:
-    dest: "{{ greenplum_install_dir }}/share/doc/pgbouncer/userlist.txt"
-    state: present
-    line: '"datadog" "{{ datadog_pg_role_password }}"'
+# - name: Setup userlist.txt for Postgres Bouncer integration
+#   lineinfile:
+#     dest: "{{ greenplum_install_dir }}/share/doc/pgbouncer/userlist.txt"
+#     state: present
+#     line: '"datadog" "{{ datadog_pg_role_password }}"'
 
-- name: Edit conf.d/pgbouncer.yaml
-  template:
-    src: pgbouncer.yaml
-    dest: /etc/dd-agent/conf.d/pgbouncer.yaml
-    owner: dd-agent
-    group: root
+# - name: Edit conf.d/pgbouncer.yaml
+#   template:
+#     src: pgbouncer.yaml
+#     dest: /etc/dd-agent/conf.d/pgbouncer.yaml
+#     owner: dd-agent
+#     group: root
