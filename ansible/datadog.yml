@@ -1,0 +1,13 @@
+---
+- name: Install DataDog agent and Postgres integrations
+  remote_user: "{{ uservar }}"
+  become: yes
+  become_user: root
+  
+  hosts: insight-server
+
+  vars:
+    greenplum_install_dir: /usr/local/greenplum-db
+
+  roles:
+    - datadog-agent

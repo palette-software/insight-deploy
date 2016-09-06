@@ -1,0 +1,32 @@
+---
+- name: Add the Datadog YUM repo
+  copy: src=datadog.repo dest=/etc/yum.repos.d owner=root group=root mode=0644
+
+- name: Install the Datadog Agent
+  yum: name=datadog-agent state=latest
+
+- name: Check if config file exists
+  stat: path={{ datadog_config_dir }}/datadog.conf
+  register: dd_config_file
+
+
+- name: Duplicate the Datadog example config
+  copy: src={{ datadog_config_dir }}/datadog.conf.example dest={{ datadog_config_dir }}/datadog.conf remote_src=true owner=dd-agent group=root
+  when: not dd_config_file.stat.exists
+
+- name: "Copy the example config into place and plug in DataDog API key"
+  lineinfile:
+    dest: "{{ datadog_config_dir }}/datadog.conf"
+    regexp: "api_key.*"
+    line: "api_key: {{ datadog_api_key }}"
+    owner: dd-agent
+    group: root
+    mode: 0644
+  when: not dd_config_file.stat.exists
+
+- name: Setup Postgres integrations
+  include: "postgres-integration.yml"
+
+- name: Re-start the Datadog agent
+  service: name=datadog-agent state=restarted
+
