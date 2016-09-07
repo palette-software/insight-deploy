@@ -31,7 +31,7 @@ set -e
         date -d "$currtime" +"%Y%m%d %H:%M:%S" > last_maintenance_ts
     else
         echo Start reporting... $(date) >> $LOGFILE
-        /opt/palette-insight-talend/run_reporting.sh
+        /opt/insight-reporting-framework/run_reporting.sh
         echo End reporting $(date) >> $LOGFILE		
     fi
 ) 768>${LOCKFILE}
