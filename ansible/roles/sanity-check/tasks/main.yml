@@ -37,12 +37,3 @@
 
 - name: Make sanity check runner script for cron
   template: src=roles/sanity-check/templates/sanity-check.sh dest={{ sanity_check_install_dir }}/sanity-check.sh owner=insight group=insight mode=0744
-
-# - name: Execute sanity check once
-#   shell: './dbcheck tests/sanity_checks.yml Config.yml'
-#   args:
-#     chdir: '{{ sanity_check_install_dir }}'
-
-- name: Schedule sanity check via cron
-  cron: name="Palette Insight Sanity Checks" minute="*/10" job="{{ sanity_check_install_dir }}/sanity-check.sh" user=insight
-  become_user: root
