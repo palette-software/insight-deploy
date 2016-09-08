@@ -1,0 +1,12 @@
+---
+- name: Set hostname
+  hosts: center
+  remote_user: ubuntu
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Include hostname variables
+      include_vars: roles/common/defaults/main.yml
+
+    - include: roles/common/tasks/hostname.yml
