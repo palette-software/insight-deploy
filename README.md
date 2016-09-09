@@ -1,7 +1,7 @@
 # Palette Insight Deployment
 
 
-## Invatory files
+## Inventory files
 
 An example inventory file:
 

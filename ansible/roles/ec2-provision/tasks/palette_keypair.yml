@@ -1,0 +1,8 @@
+# ---
+  - name: Make sure we can ssh into the machine
+    ec2_key:
+      name: 'Palette-Insight-Standard-Keypair-2016-01-19'
+      region: "{{ aws_region }}"
+      key_material: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCiWYolmK1PdAvsevdg4SO3CAbQ8x8CAjstp5mYkEYEhAh+sFVvJxmLTYJYzMMIeFWm+SVcr+rfCnioxZ5rVHNKmRjqAGNPvSeqEenmlh08uwSggJQkJw95N+N4vfrEhshVfEVMn7TLizfD0Jkvv+Y5YFNlfCD0r8nyjBoL8iEBgsSesgrNoAL7Lg2kOLRpyREBfyI6nkS4pLQVr2J9aP9VGbGJkZsVRge9sVO1qY8dAA0TGWgMtqOe5eAJZgNC+EA5PfORk8fytp597Nwyh6eHkhgLN6k6/fTkxggx8tcJOAZ9e9D5SRGNEr5H+ofpTtOfgKfw3cEcXJVQWTQ9OWZZ Palette-Insight-Standard-Keypair-2016-01-19'
+      state: present
+
