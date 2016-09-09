@@ -1,0 +1,26 @@
+---
+- name: Install New Relic Agent
+  hosts: center
+  remote_user: ubuntu
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Add New Relic repository
+      apt_repository:
+        repo: 'deb http://apt.newrelic.com/debian/ newrelic non-free'
+        state: present
+      
+    - name: Install New Relic package
+      apt: 
+        name: newrelic-sysmond
+        force: yes
+        state: present
+
+    - name: Set New Relic license key
+      shell: nrsysmond-config --set license_key={{ new_relic_license_key }}
+
+    - name: Start New Relic System Monitor Daemon
+      service:
+        name: newrelic-sysmond
+        state: started
