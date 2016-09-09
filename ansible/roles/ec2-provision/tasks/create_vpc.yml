@@ -1,0 +1,46 @@
+---
+  - name: Make sure the Insight VPC exists
+    ec2_vpc:
+      state: present
+      cidr_block: 172.32.0.0/16
+      resource_tags: { Name: "Palette Insight"}
+      internet_gateway: True
+      region: "{{ aws_region }}"
+    register: ec2_vpc
+
+  - name: Make sure the insight VPC subnet exists
+    ec2_vpc_subnet:
+      vpc_id: "{{ ec2_vpc.vpc.id }}"
+      cidr: 172.32.1.0/24
+      state: present
+      resource_tags: { Name: "Palette Insight"}
+      region: "{{ aws_region }}"
+    register: ec2_vpc_subnet
+  
+  - name: return subnet id
+    set_fact:
+      create_vpc_subnet__subnet_id: "{{ ec2_vpc_subnet.subnet.id }}"
+
+  - name: Create internet gateway (igw)
+    ec2_vpc_igw:
+      vpc_id: "{{ ec2_vpc.vpc.id }}"
+      region: "{{ aws_region }}"
+      state: present
+    register: igw
+
+  # Basic creation example:
+  - name: Set up public subnet route table
+    ec2_vpc_route_table:
+      vpc_id: "{{ ec2_vpc.vpc.id }}"
+      region: "{{ aws_region }}"
+      tags:
+        Name: "Palette Insight"
+      subnets:
+        - "{{ ec2_vpc_subnet.subnet.id }}"
+      routes:
+        - dest: 0.0.0.0/0
+          gateway_id: "{{ igw.gateway_id }}"
+
+  - set_fact: 
+      create_vpc__vpc_id: "{{ ec2_vpc.vpc.id  }}"  
+      create_vpc_subnet__subnet_id: "{{ ec2_vpc_subnet.subnet.id }}"

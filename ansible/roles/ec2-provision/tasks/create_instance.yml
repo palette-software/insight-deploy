@@ -1,0 +1,59 @@
+---
+  # returns
+  - include: "palette_keypair.yml"
+
+  # Left the dead code by intention because
+  # Searching for the right AMI was not trivial
+  # - name: Search for the right AMI
+  #   ec2_ami_find:
+  #     name: 'CentOS Linux 6 x86_64*'
+  #     region: "{{ aws_region }}"
+  #     owner: 'aws-marketplace'
+  #     virtualization_type: hvm
+  #   register: ami_find
+
+  - name: Store ami_id
+    set_fact:
+      # create_instance__ami_id: "{{ ami_find.results[0].ami_id }}"
+      create_instance__ami_id: "ami-1c221e76"
+  
+  - name: Create Palette Insight Instance
+    ec2:
+      instance_type: m4.2xlarge
+        # instance_type: t2.micro
+      image: "{{ create_instance__ami_id }}"
+      region: "{{ aws_region }}"
+      wait: yes
+      vpc_subnet_id: "{{ vpc_subnet_id }}"
+      group_id: "{{ group_id }}"
+      key_name: 'palette-insight'
+      volumes:
+        - device_name: /dev/sda1
+          volume_type: gp2
+          volume_size: 10
+          delete_on_termination: true
+        - device_name: /dev/sdb
+          volume_type: gp2
+          volume_size: 1000
+          delete_on_termination: false
+        - device_name: /dev/sdc
+          volume_type: gp2
+          volume_size: 32
+          delete_on_termination: true
+      instance_tags:
+          Name: Palette Insight Server
+      exact_count: 1
+      count_tag:
+          Name: Palette Insight Server
+      assign_public_ip: yes
+    register: instance
+  
+  - name: Add elastic IP to instance
+    ec2_eip: 
+      device_id: "{{ instance.tagged_instances[0].id }}"
+      region: "{{ aws_region }}"
+    register: eip
+
+  - name: return EIP
+    set_fact:
+      create_instance__eip: "{{ eip.public_ip }}"

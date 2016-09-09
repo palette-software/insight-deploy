@@ -1,0 +1,21 @@
+---
+  # returns create_vpc__vpc_id
+  - include: create_vpc.yml
+   
+  # returns create_security_group__group_id
+  - include: create_security_group.yml
+    vars:
+      vpc_id: "{{ create_vpc__vpc_id }}"
+
+  # returns create_instance__eip
+  - include: create_instance.yml 
+    vars:
+      group_id: "{{ create_security_group__group_id }}"
+      vpc_subnet_id: "{{ create_vpc_subnet__subnet_id }}"
+
+  - include: register_dns.yml
+    vars:
+      eip: "{{ create_instance__eip }}"
+      prefix: "{{ CUSTOMER_NAME }}"
+      aws_access: "{{ ROOT_AWS_ACCESS_KEY }}"
+      aws_secret: "{{ ROOT_AWS_SECRET_KEY }}"

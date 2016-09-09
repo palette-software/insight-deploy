@@ -1,0 +1,12 @@
+---
+  - name: Create Route53 record
+    route53:
+      aws_access_key: '{{ aws_access }}'
+      aws_secret_key: '{{ aws_secret }}'
+      command: create
+      zone: palette-software.net.
+      record: "{{ prefix }}-insight.palette-software.net"
+      type: A
+      value: "{{ eip }}"
+      overwrite: no
+    ignore_errors: True
