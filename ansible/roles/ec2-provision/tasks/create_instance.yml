@@ -20,7 +20,6 @@
   - name: Create Palette Insight Instance
     ec2:
       instance_type: m4.2xlarge
-        # instance_type: t2.micro
       image: "{{ create_instance__ami_id }}"
       region: "{{ aws_region }}"
       wait: yes
