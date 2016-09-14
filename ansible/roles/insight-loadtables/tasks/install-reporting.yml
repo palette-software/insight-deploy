@@ -54,6 +54,9 @@
 
 # ==================== REPORTING ========================
 
+- name: Install python3 and pip3
+  include: roles/common/tasks/python3.yml
+
 - name: Install Insight-reporting packages
   yum: name='{{ item }}' state=latest update_cache=yes
   with_items:

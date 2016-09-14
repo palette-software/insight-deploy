@@ -7,22 +7,8 @@
   file: path={{ insight_services_log_dir }} state=directory mode=0755 owner=insight group=insight
   become_user: root
 
-- name: Install python3.5 and pip3.5
-  yum:
-    name: '{{ item }}'
-    state: latest
-    update_cache: yes
-  become_user: root
-  with_items:
-    - python35u
-    - python35u-pip
-
-- name: Create python3 symlinks
-  file: src=/usr/bin/{{ item.src }} dest=/usr/bin/{{ item.dest }} state=link owner=root group=root
-  with_items:
-    - { src: 'python3.5', dest: 'python3' }
-    - { src: 'pip3.5', dest: 'pip3' }
-  become_user: root
+- name: Install python3 and pip3
+  include: roles/common/tasks/python3.yml
 
 - name: Collect Insight Services Status Page RPM
   yum:
