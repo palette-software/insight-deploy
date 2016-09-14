@@ -54,7 +54,7 @@
 
 # ==================== REPORTING ========================
 
-- name: Install Insight-reporting to {{ insight_reporting_location }}
+- name: Install Insight-reporting packages
   yum: name='{{ item }}' state=latest update_cache=yes
   with_items:
     - palette-insight-reporting
