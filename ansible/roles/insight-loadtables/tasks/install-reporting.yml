@@ -52,10 +52,13 @@
   become: yes
   become_user: gpadmin
 
-# ==================== FULL DATAMODEL ========================
+# ==================== REPORTING ========================
 
-- name: Install Insight-reporting to {{ insight_reporting_location }}
-  yum: name=palette-insight-reporting state=latest update_cache=yes
+- name: Install Insight-reporting packages
+  yum: name='{{ item }}' state=latest update_cache=yes
+  with_items:
+    - palette-insight-reporting
+    - palette-insight-reporting-framework
 
 - name: Install the data model
   shell: /opt/insight-toolkit/update-data-model.sh {{ insight_datamodel_version }} chdir=/opt/insight-toolkit
