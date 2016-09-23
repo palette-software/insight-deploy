@@ -5,6 +5,11 @@
   become: yes
   become_user: root
 
+  vars_prompt:
+    - name: "insight_datamodel_version"
+      prompt: "Enter datamodel version in (v1.10.20) format. Leave it blank for latest."
+      default: ""
+
   roles:
     - common
     - xfs-init
