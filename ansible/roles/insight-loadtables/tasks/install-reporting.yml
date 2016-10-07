@@ -4,7 +4,7 @@
 
 - name: Check if there is any metadata file present in the uploaded folder
   shell: >
-    find /data/insight-server/uploads/{{ cluster_name }}/uploads | grep metadata
+    find /data/insight-server/uploads/palette/uploads | grep metadata
   register: metadata_already_present
   # grep: Normally the exit status is 0 if a line is selected, 1 if no lines were selected, and 2 if an error occurred.
   failed_when: metadata_already_present.rc == 2
@@ -12,14 +12,14 @@
   changed_when: metadata_already_present.rc == 1
 
 - name: Create initial metadata directory
-  file: dest=/data/insight-server/uploads/{{ cluster_name }}/uploads/_install state=directory owner=insight group=insight mode=755
+  file: dest=/data/insight-server/uploads/palette/uploads/_install state=directory owner=insight group=insight mode=755
   when: metadata_already_present|changed
 
 
 - name: Copy initial metadata for the current tableau version for the initial loadtables
   copy:
     src: "roles/insight-loadtables/files/tableau-metadata/{{ tableau_version }}.csv.gz"
-    dest: "/data/insight-server/uploads/{{ cluster_name }}/uploads/_install/metadata-install.csv.gz"
+    dest: "/data/insight-server/uploads/palette/uploads/_install/metadata-install.csv.gz"
     owner: insight
     group: insight
     mode: 0644
