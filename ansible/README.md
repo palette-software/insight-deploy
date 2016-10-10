@@ -61,13 +61,13 @@ following this pattern:
 ```ini
 [early-adopter]
 bsci-insight.palette-software.net splunk_host=BSCI-PROD
-cluster_name=bsci tableau_version=9.2.4
+tableau_version=9.2.4
 netflix-insight.palette-software.net splunk_host=NETFLIX
-cluster_name=netflix-cluster01 tableau_version=9.2.4
+tableau_version=9.2.4
 isi-qa-insight.palette-software.net splunk_host=ISI-QA
-cluster_name=isi-qa tableau_version=9.3.0
+tableau_version=9.3.0
 isi-insight.palette-software.net splunk_host=ISI-PROD
-cluster_name=ISI-Prod tableau_version=9.1.1
+tableau_version=9.1.1
 
 
 [early-adopter:vars]
@@ -77,9 +77,8 @@ insight_datamodel_version=v1.2.3
 
 [dev]
 staging-insight.palette-software.net splunk_host=STAGING
-cluster_name=Staging tableau_version=9.2.4
-dev-insight.palette-software.net splunk_host=DEV cluster_name=Dev
 tableau_version=9.2.4
+dev-insight.palette-software.net splunk_host=DEV tableau_version=9.2.4
 
 [dev:vars]
 channel=early_adopter
@@ -97,10 +96,6 @@ Adding a host means adding a line to the proper section (dev, early
 adopter), and specifying the correct values for the deployment:
 
 - ```splunk_host```: the name which will be used in splunk
-
-- ```cluster_name```: the name of the directory inside
-  ```/data/insight-server```. Has to be the same name as the ```id``` of
-the license
 
 - ```tableau_version```: the version of tableau the client is using.
   Used for getting the initial metadata for LoadTables when the agent

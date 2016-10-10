@@ -8,7 +8,7 @@ set -e
 . {{ greenplum_install_path }}/greenplum_path.sh
 
 # Go to the actual data directory where the files are
-cd /data/insight-server/uploads/{{ cluster_name }}/processing
+cd /data/insight-server/uploads/palette/processing
 
 # Start gpfidst in background, but dont log to stdout instead of
 # a logfile

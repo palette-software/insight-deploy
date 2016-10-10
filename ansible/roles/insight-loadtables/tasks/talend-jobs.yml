@@ -2,8 +2,8 @@
 - name: Create the Talend loadtables runner script
   template: src=load_tables_runner.sh dest={{ insight_talend_location }}/load_tables_runner.sh owner=insight group=insight mode=755
 
-- name: Create the Talend config.xml in /data/insight-server/uploads/{{ cluster_name }}
-  template: src=config.xml dest=/data/insight-server/uploads/{{ cluster_name }}/config.xml owner=insight group=insight mode=640
+- name: Create the Talend config.xml in /data/insight-server/uploads/palette
+  template: src=config.xml dest=/data/insight-server/uploads/palette/config.xml owner=insight group=insight mode=640
 
 - name: Create the log directory for talend components
   file: path={{ talend_log_path }} state=directory mode=0775 owner=root group=insight
