@@ -1,7 +1,6 @@
 ---
 
 
-insight_talend_location: /opt/palette-insight-talend
 insight_reporting_location: /opt/palette-insight-reporting
 greenplum_install_path: /usr/local/greenplum-db
 talend_log_path: /var/log/palette-insight-talend

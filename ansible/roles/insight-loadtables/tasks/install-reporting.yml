@@ -29,7 +29,7 @@
 
 - name: Run initial loadtables to generate tables in GP
   become_user: insight
-  shell: "{{ insight_talend_location }}/load_tables.sh"
+  shell: "/opt/insight-gp-import/run_gp_import.sh"
   register: initial_loadtables
   when: metadata_already_present|changed
   failed_when: initial_loadtables|failed or '{{ loadtables_no_external_tables_error_msg }}' in initial_loadtables.stderr

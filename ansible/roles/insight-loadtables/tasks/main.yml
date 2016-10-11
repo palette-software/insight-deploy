@@ -15,7 +15,6 @@
 
 - include: "database-setup.yml"
 - include: "insight-gpfdist.yml"
-- include: "talend-jobs.yml"
 - include: "install-reporting.yml"
 
 - name: Create the temporary crontab / status storage directory for insight-services
