@@ -2,9 +2,6 @@
 - name: Install psycopg2 for ansible to modify postgres
   yum: name=python-psycopg2 state=present
 
-- name: Install Insight-loadTables to {{ insight_talend_location }}
-  yum: name=palette-insight-loadtables state=latest update_cache=yes
-
 - name: Create directories for uploading and processing in /data/insight-server/uploads/palette
   file: path=/data/insight-server/uploads/palette{{ item }} state=directory mode=0755 owner=insight group=insight
   with_items:
