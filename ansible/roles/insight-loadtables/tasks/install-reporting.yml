@@ -25,6 +25,10 @@
     mode: 0644
   when: metadata_already_present|changed
 
+# ==================== INSTALL LOADTABLES ========================
+- name: Install Insight-GP-Import packages
+  yum: name='palette-insight-gp-import' state=latest update_cache=yes
+  
 # ==================== INITIAL LOADTABLES ====================
 
 - name: Run initial loadtables to generate tables in GP
