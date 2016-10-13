@@ -3,7 +3,6 @@
 
 insight_reporting_location: /opt/palette-insight-reporting
 greenplum_install_path: /usr/local/greenplum-db
-talend_log_path: /var/log/palette-insight-talend
 
 # names  of the database & schema to use
 insight_database_name: palette
@@ -12,7 +11,7 @@ insight_schema_name: palette
 # The gpfdist port to use
 gpfdist_port: 18010
 
-# The ETL user for talend tasks
+# The ETL user for etl tasks
 palette_etl_user: palette_etl_user
 palette_etl_user_pass: palette123
 
