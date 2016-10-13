@@ -25,11 +25,18 @@
     mode: 0644
   when: metadata_already_present|changed
 
+- name: Install python3 and pip3
+  include: roles/common/tasks/python3.yml
+  
+# ==================== INSTALL LOADTABLES ========================
+- name: Install Insight-GP-Import packages
+  yum: name='palette-insight-gp-import' state=latest update_cache=yes
+  
 # ==================== INITIAL LOADTABLES ====================
 
 - name: Run initial loadtables to generate tables in GP
   become_user: insight
-  shell: "{{ insight_talend_location }}/load_tables.sh"
+  shell: "/opt/insight-gp-import/run_gp_import.sh"
   register: initial_loadtables
   when: metadata_already_present|changed
   failed_when: initial_loadtables|failed or '{{ loadtables_no_external_tables_error_msg }}' in initial_loadtables.stderr
@@ -53,9 +60,6 @@
   become_user: gpadmin
 
 # ==================== REPORTING ========================
-
-- name: Install python3 and pip3
-  include: roles/common/tasks/python3.yml
 
 - name: Install Insight-reporting packages
   yum: name='{{ item }}' state=latest update_cache=yes
