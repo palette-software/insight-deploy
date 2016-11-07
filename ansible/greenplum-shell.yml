@@ -1,0 +1,87 @@
+# Provision machine on which the greenplum rpm can be installed
+---
+- name: Create Greenplum shell
+  hosts: greenplum_test
+  remote_user: centos
+  become: yes
+  become_user: root
+
+  tasks:
+    - name: Add palette.repo
+      copy:
+        dest: /etc/yum.repos.d/palette.repo
+        content: |
+          [palette-epel-proxy]
+          name=Palette Epel Proxy
+          baseurl=https://rpm.palette-software.com/epel-6
+          enabled=1
+          gpgcheck=0
+
+          [palette-ius-proxy]
+          name=Palette IUS Proxy
+          baseurl=https://rpm.palette-software.com/ius-6
+          enabled=1
+          gpgcheck=0
+
+          [palette-centos-proxy]
+          name=Palette CentOS Proxy
+          baseurl=https://rpm.palette-software.com/centosproxy-6
+          enabled=0
+          gpgcheck=0
+
+          [palette-rpm]
+          name=Palette RPM
+          baseurl=https://rpm.palette-software.com/centos/dev
+          enabled=1
+          gpgcheck=0
+
+    - name: Set hostname to {{hostname_fqdn}}
+      hostname: name={{hostname_fqdn}}
+
+    # This inserts the hostname to the begining of the list of hostnames after 127.0.0.1
+    # eg.:
+    #   127.0.0.1     locahost locahost4
+    # will become
+    #   127.0.0.1     hostname locahost locahost4
+    - name: Add {{hostname_fqdn}} to /etc/hosts
+      replace:
+        dest: /etc/hosts
+        # Line begins with the string "127.0.0.1" and at least 1 whitespace
+        # and it is _not_ followed by the hostname string
+        regexp: '^(127\.0\.0\.1\s+)(?!.*?{{ hostname_fqdn }})'
+        replace: '\1{{ hostname_fqdn }} '
+
+    - name: Add mirror.centos.org to /etc/hosts
+      lineinfile:
+        dest: /etc/hosts
+        state: present
+        line: "93.113.36.66    mirror.centos.org"
+
+    - name: Disable mirrorlist in CentOS-Base.repo
+      replace:
+        dest: /etc/yum.repos.d/CentOS-Base.repo
+        regexp: '^mirrorlist'
+        replace: '#mirrorlist'
+
+    - name: Enable baseurl in CentOS-Base.repo
+      replace:
+        dest: /etc/yum.repos.d/CentOS-Base.repo
+        regexp: '^#baseurl'
+        replace: 'baseurl'
+
+    - name: Install xfsprogs
+      yum:
+        name: xfsprogs
+
+    - name: Format /dev/xvdb
+      filesystem:
+        fstype: xfs
+        dev:    /dev/xvdb
+
+    - name: Mount /dev/xvdb to /data (add to fstab too)
+      mount:
+        name: /data
+        src: /dev/xvdb
+        fstype: xfs
+        opts: rw,noatime,inode64,allocsize=16m
+        state: mounted
