@@ -37,7 +37,7 @@
 
     - name: Set hostname to {{hostname_fqdn}}
       hostname: name={{hostname_fqdn}}
-    
+
     # This inserts the hostname to the begining of the list of hostnames after 127.0.0.1
     # eg.:
     #   127.0.0.1     locahost locahost4
@@ -56,29 +56,29 @@
         dest: /etc/hosts
         state: present
         line: "93.113.36.66    mirror.centos.org"
-  
-    - name: Disable mirrorlist in CentOS-Base.repo 
+
+    - name: Disable mirrorlist in CentOS-Base.repo
       replace:
         dest: /etc/yum.repos.d/CentOS-Base.repo
         regexp: '^mirrorlist'
         replace: '#mirrorlist'
-    
+
     - name: Enable baseurl in CentOS-Base.repo
       replace:
         dest: /etc/yum.repos.d/CentOS-Base.repo
         regexp: '^#baseurl'
         replace: 'baseurl'
 
-    - name: Install xfsprogs 
+    - name: Install xfsprogs
       yum:
         name: xfsprogs
-    
-    - name: Format /dev/xvdb 
+
+    - name: Format /dev/xvdb
       filesystem:
         fstype: xfs
         dev:    /dev/xvdb
-    
-    - name: Mount /dev/xvdb to /data (add to fstab too)     
+
+    - name: Mount /dev/xvdb to /data (add to fstab too)
       mount:
         name: /data
         src: /dev/xvdb
