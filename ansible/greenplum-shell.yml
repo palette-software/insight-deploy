@@ -47,8 +47,8 @@
       replace:
         dest: /etc/hosts
         # Line begins with the string "127.0.0.1" and at least 1 whitespace
-        # and it is _not_ followed by any whitespace and the hostname string 
-        regexp: '^(127\.0\.0\.1\s+)(?!\s*{{ hostname_fqdn }})'
+        # and it is _not_ followed by the hostname string
+        regexp: '^(127\.0\.0\.1\s+)(?!.*?{{ hostname_fqdn }})'
         replace: '\1{{ hostname_fqdn }} '
 
     - name: Add mirror.centos.org to /etc/hosts
