@@ -7,13 +7,17 @@
   vars_prompt:
     - name: "AWS_ACCESS_KEY"
       prompt: "Enter AWS Access key"
-      private: yes 
+      private: yes
     - name: "AWS_SECRET_KEY"
       prompt: "Enter AWS Secret Key"
       private: yes
     - name: "CUSTOMER_NAME"
       prompt: "Enter customer name/ticker"
       private: no
+    - name: "DELETE_DATA"
+      prompt: "Delete the DATA volume on termination?"
+      private: no
+      default: false
 
   environment:
     AWS_ACCESS_KEY: "{{ AWS_ACCESS_KEY }}"
