@@ -16,7 +16,7 @@
     set_fact:
       # create_instance__ami_id: "{{ ami_find.results[0].ami_id }}"
       create_instance__ami_id: "ami-1c221e76"
-  
+
   - name: Create Palette Insight Instance
     ec2:
       instance_type: m4.2xlarge
@@ -34,7 +34,7 @@
         - device_name: /dev/sdb
           volume_type: gp2
           volume_size: 1000
-          delete_on_termination: false
+          delete_on_termination: "{{ delete_data_volume_on_termination }}"
         - device_name: /dev/sdc
           volume_type: gp2
           volume_size: 32
@@ -46,9 +46,9 @@
           Name: Palette Insight Server
       assign_public_ip: yes
     register: instance
-  
+
   - name: Add elastic IP to instance
-    ec2_eip: 
+    ec2_eip:
       device_id: "{{ instance.tagged_instances[0].id }}"
       region: "{{ aws_region }}"
     register: eip
