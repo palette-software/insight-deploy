@@ -28,6 +28,3 @@ supervisor_version: 3.2.3
 # specifies a different timezone
 server_timezone: "America/Los_Angeles"
 
-
-insight_swap_volume: 'xvdt'
-insight_swap_volume_dev: '/dev/{{ insight_swap_volume }}'
