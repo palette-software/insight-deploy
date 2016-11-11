@@ -1,6 +1,6 @@
 ---
 # The default swap volume
-insight_swap_volume: 'xvdt'
+insight_swap_volume: 'xvdc'
 
 # Make swappiness small
 swappiness: 1
