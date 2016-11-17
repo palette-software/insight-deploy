@@ -12,6 +12,7 @@
     vars:
       group_id: "{{ create_security_group__group_id }}"
       vpc_subnet_id: "{{ create_vpc_subnet__subnet_id }}"
+      customer_name: "{{ CUSTOMER_NAME }}"
       delete_data_volume_on_termination: "{{ DELETE_DATA_VOLUME }}"
 
   - include: register_dns.yml
