@@ -40,10 +40,10 @@
           volume_size: 32
           delete_on_termination: true
       instance_tags:
-          Name: "{{ customer_name }}"
+          Name: "Palette Insight Server - {{ customer_name }}"
       exact_count: 1
       count_tag:
-          Name: "{{ customer_name }}"
+          Name: "Palette Insight Server - {{ customer_name }}"
       assign_public_ip: yes
     register: instance
 
