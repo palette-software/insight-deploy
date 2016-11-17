@@ -21,3 +21,6 @@
       prefix: "{{ CUSTOMER_NAME }}"
       aws_access: "{{ ROOT_AWS_ACCESS_KEY }}"
       aws_secret: "{{ ROOT_AWS_SECRET_KEY }}"
+
+  - name: Wait for SSH to come up on {{ CUSTOMER_NAME }} at {{ create_instance__eip }}
+    wait_for: host={{ create_instance__eip }} port=22 delay=60 timeout=320 state=started
