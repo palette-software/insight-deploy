@@ -94,7 +94,7 @@ cd rpm/greenplum
 
 ## Installing the insight-server base (without greenplum) on a machine
 
-**NOTE**: This method is *superseded* by the [Platte Insight] installer.
+**NOTE**: This method is *superseded* by the [Palette Insight] installer.
 
 ```bash
 ansible-playbook insight-server.yml -i <INVENTORY> --private-key <PRIVATE_KEY_FILE> --extra-vars "uservar=<SSH_USERNAME_FOR_KEY> --vault-password-file <VAULT_PASSWORD_FILE>"
