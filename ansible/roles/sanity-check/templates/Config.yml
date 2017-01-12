@@ -7,5 +7,5 @@ DbConnector:
     Schema: go_test
 
 SplunkServerAddress: {{ splunk_server_address }}
-SplunkToken: "F59DC3B4-AAB9-4330-ACED-682E1681B507"
+SplunkToken: ""
 SplunkCustomer: {{ splunk_host }}

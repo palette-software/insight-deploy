@@ -34,8 +34,7 @@ cd rpm/greenplum
 ansible-playbook insight-server.yml -i <INVENTORY> --private-key <PRIVATE_KEY_FILE> --extra-vars "uservar=<SSH_USERNAME_FOR_KEY> --vault-password-file <VAULT_PASSWORD_FILE>"
 ```
 
-***REMOVED***
-
+The <VAULT_PASSWORD_FILE> is just a text file, which only contains the password for the Ansible Vault.
 
 For example to install on a list of EC2 hosts stored in aws-hosts.ini:
 
