@@ -150,6 +150,4 @@ This playbook:
 
 Palette Insight Deployment is licensed under the GNU GPLv3 license. For professional support please contact developers@palette-software.com
 
-**TODO: Clarify support part!**
-
 Any bugs discovered should be filed in the [Palette Insight Deployment Git issue tracker](https://github.com/palette-software/insight-deploy/issues) or contribution is more than welcome.
